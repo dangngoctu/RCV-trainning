@@ -13,14 +13,21 @@ class CreateUsersTable extends Migration
      */
     public function up()
     {
-        Schema::create('users', function (Blueprint $table) {
-            $table->id();
+        Schema::dropIfExists('mst_users');
+        
+        Schema::create('mst_users', function (Blueprint $table) {
+            $table->bigInteger('id', true)->unsigned();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+            $table->timestamp('verify_email')->nullable();
             $table->string('password');
-            $table->rememberToken();
+            $table->tinyInteger('is_active')->default(1)->comment('0: Không hoạt động , 1 : Hoạt động');
+            $table->tinyInteger('is_delete')->default(0)->comment('0: Bình thường , 1 : Đã xóa');
+            $table->timestamp('last_login_at')->nullable();
+            $table->string('last_login_ip')->nullable();
+            $table->index(['email']);
             $table->timestamps();
+            $table->rememberToken();
         });
     }
 
@@ -31,6 +38,6 @@ class CreateUsersTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('users');
+        Schema::dropIfExists('mst_users');
     }
 }
