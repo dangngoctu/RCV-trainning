@@ -46,4 +46,91 @@ class CustomerController extends Controller
             return $this->JsonExport(200, 'Success', []);
         }
     }
+
+    public function apiCustomerDetail(Request $request){
+        $rules = [
+            'id' => 'required|digits_between:1,10'
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return $this->JsonExport(403, $validator->errors()->first());
+        } else {
+            try{
+                $data = Models\MstCustomer::where('customer_id', $request->id)->first();
+                if($data){
+                    return $this->JsonExport(200, 'Success', $data);
+                } else {
+                    return $this->JsonExport(403, 'Customer is not invalid');
+                }
+            } catch (\Exception $e){
+                Log::error($e);
+                return $this->JsonExport(500, 'Please contact with admin for help!');
+            }
+        }
+    }
+
+    public function apiCustomerAction(Request $request){
+        $rules = [
+            'action' => 'required|in:update,create',
+            'customer_name' => 'required|max:255',
+            'tel_num' => 'required|max:14|regex:/^([0-9\s\-\+\(\)]*)$/',
+            'email' => 'required|max:255|email',
+            'address' => 'required|max:255',
+        ];
+        if($request->action === "update"){
+            $rules['id'] = 'required|digits_between:1,10';
+        }
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return $this->JsonExport(403, $validator->errors()->first());
+        } else {
+            try {
+                DB::beginTransaction();
+                $data = [];
+                if(!empty($request->customer_name) && $request->has('customer_name')){
+                    $data['customer_name'] = $request->customer_name;
+                }
+
+                if(!empty($request->email) && $request->has('email')){
+                    $data['email'] = $request->email;
+                }
+
+                if(!empty($request->address) && $request->has('address')){
+                    $data['address'] = $request->address;
+                }
+
+                if(!empty($request->tel_num) && $request->has('tel_num')){
+                    $data['tel_num'] = trim($request->tel_num);
+                }
+
+                if(!empty($request->is_active) && $request->has('is_active')){
+                    $data['is_active'] = $request->is_active;
+                } else {
+                    $data['is_active'] = 0;
+                }
+
+                if($request->action === 'create'){
+                    $action = Models\MstCustomer::insert($data);
+                } else {
+                    $customer = Models\MstCustomer::where('customer_id', $request->id)->first();
+                    if($customer){
+                        $action = $customer->update($data);
+                    } else {
+                        return $this->JsonExport(403, 'Customer is not invalid');
+                    }
+                }
+                if($action){
+                    DB::commit();
+                    return $this->JsonExport(200, 'Success');
+                } else {
+                    DB::rollback();
+                    return $this->JsonExport(403, 'Please review your data again.');
+                }
+            } catch (\Exception $e){
+                DB::rollback();
+                Log::error($e);
+                return $this->JsonExport(500, 'Please contact with admin for help!');
+            }
+        }
+    }
 }
