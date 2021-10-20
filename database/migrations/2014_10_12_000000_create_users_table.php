@@ -18,7 +18,7 @@ class CreateUsersTable extends Migration
         Schema::create('mst_users', function (Blueprint $table) {
             $table->bigInteger('id', true)->unsigned();
             $table->string('name');
-            $table->string('email')->unique();
+            $table->string('email', 255)->unique();
             $table->timestamp('verify_email')->nullable();
             $table->string('password');
             $table->tinyInteger('is_active')->default(1)->comment('0: Không hoạt động , 1 : Hoạt động');

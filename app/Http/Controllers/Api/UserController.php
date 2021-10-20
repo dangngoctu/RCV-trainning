@@ -14,7 +14,11 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    //
+    public function __construct()
+    {
+        
+    }
+    
     public function apiUserList(Request $request){
         try {
             $data = Models\MstUser::where('is_delete', 0);

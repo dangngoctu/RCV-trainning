@@ -14,8 +14,12 @@ use Carbon\Carbon;
 
 class LoginController extends Controller
 {
-    //
-    public function api_login(Request $request){
+    public function __construct()
+    {
+        
+    }
+
+    public function apiLogin(Request $request){
         $rules = [
             'email' => 'required|email|max:255',
             'password' => 'required|max:255'
@@ -56,7 +60,7 @@ class LoginController extends Controller
         }
     }
 
-    public function api_logout(Request $request){
+    public function apiLogout(Request $request){
         
         try{
             if($request->header('Authorization')){
