@@ -25,6 +25,7 @@ class CreateUsersTable extends Migration
             $table->tinyInteger('is_delete')->default(0)->comment('0: Bình thường , 1 : Đã xóa');
             $table->timestamp('last_login_at')->nullable();
             $table->string('last_login_ip')->nullable();
+            $table->string('group_role', 50)->nullable();
             $table->index(['email']);
             $table->timestamps();
             $table->rememberToken();

@@ -19,10 +19,10 @@ class CreateMstCustomerTable extends Migration
             $table->bigInteger('customer_id', true)->unsigned();
             $table->string('customer_name', 255);
             $table->string('email', 255);
-            $table->string('phone', 14);
+            $table->string('tel_num', 14);
             $table->string('address', 255);
-            $table->tinyInteger('is_acive')->default(1)->comment('1: active, 2 inactive');
-            $table->longtext('description');
+            $table->tinyInteger('is_active')->default(1)->comment('1: active, 2 inactive');
+            $table->longtext('description')->nullable();
             $table->index(['customer_id']);
             $table->timestamps();
         });
