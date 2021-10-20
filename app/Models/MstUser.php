@@ -8,6 +8,9 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
+use Tymon\JWTAuth\Contracts\JWTSubject;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 
 /**
  * Class MstUser
@@ -27,13 +30,16 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class MstUser extends Model
+class MstUser extends Authenticatable implements JWTSubject
 {
+	use Notifiable;
+	
 	protected $table = 'mst_users';
 
 	protected $casts = [
 		'is_active' => 'int',
-		'is_delete' => 'int'
+		'is_delete' => 'int',
+		'group_role' => 'int'
 	];
 
 	protected $dates = [
@@ -57,4 +63,14 @@ class MstUser extends Model
 		'last_login_ip',
 		'remember_token'
 	];
+
+	public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims()
+    {
+        return [];
+	}
 }
