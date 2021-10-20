@@ -31,5 +31,6 @@ Route::group(['middleware' => 'auth.jwt'], function () {
         Route::post('/', 'CustomerController@apiCustomerList')->name('api_customer_list');
         Route::post('/detail', 'CustomerController@apiCustomerDetail')->name('api_customer_detail');
         Route::post('/action', 'CustomerController@apiCustomerAction')->name('api_customer_action');
+        Route::post('/import', 'CustomerController@apiCustomerImport')->name('api_customer_import');
     });
 });

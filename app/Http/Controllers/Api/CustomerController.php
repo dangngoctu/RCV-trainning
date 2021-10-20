@@ -11,6 +11,8 @@ use Validator;
 use Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Imports\CustomersImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CustomerController extends Controller
 {
@@ -72,7 +74,7 @@ class CustomerController extends Controller
     public function apiCustomerAction(Request $request){
         $rules = [
             'action' => 'required|in:update,create',
-            'customer_name' => 'required|max:255',
+            'customer_name' => 'required|max:255|min:5',
             'tel_num' => 'required|max:14|regex:/^([0-9\s\-\+\(\)]*)$/',
             'email' => 'required|max:255|email',
             'address' => 'required|max:255',
@@ -128,6 +130,29 @@ class CustomerController extends Controller
                 }
             } catch (\Exception $e){
                 DB::rollback();
+                Log::error($e);
+                return $this->JsonExport(500, 'Please contact with admin for help!');
+            }
+        }
+    }
+
+    public function apiCustomerImport(Request $request){
+        $rules = [
+            'import_file' => 'required|mimes:xlsx,xls',
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return $this->JsonExport(403, $validator->errors()->first());
+        } else {
+            try {
+                $import = new CustomersImport();
+                Excel::import($import, $request->import_file);
+                if(count($import->getErrorRow()) > 0){
+                    return $this->JsonExport(200, 'row '.implode( ',', $import->getErrorRow()). ' is error');
+                } else {
+                    return $this->JsonExport(200, 'Success');
+                }
+            } catch (\Exception $e){
                 Log::error($e);
                 return $this->JsonExport(500, 'Please contact with admin for help!');
             }
