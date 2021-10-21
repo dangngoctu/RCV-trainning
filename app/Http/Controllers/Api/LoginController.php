@@ -24,7 +24,14 @@ class LoginController extends Controller
             'email' => 'required|email|max:255',
             'password' => 'required|max:255'
         ];
-        $validator = Validator::make($request->all(), $rules);
+        $messages = [
+            'email.required' => 'Email không được trống.',
+            'email.email' => 'Email không đúng định dạng.',
+            'email.max' => 'Email tối đa 255 ký tự.',
+            'password.required' => 'Mật khẩu không được trống.',
+            'password.max' => 'Mật khẩu tối đa 255 ký tự.',
+        ];
+        $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {
             return $this->JsonExport(403, $validator->errors()->first());
         } else {
@@ -51,11 +58,11 @@ class LoginController extends Controller
                     return $this->JsonExport(403, 'Invalid Email or Password');
                 }
                 DB::commit();
-                return $this->JsonExport(200, 'Success', $token);
+                return $this->JsonExport(200, 'Thành công', $token);
             } catch (\Exception $e){
                 DB::rollback();
                 Log::error($e);
-                return $this->JsonExport(500, 'Please contact with admin for help!');
+                return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
             }
         }
     }
@@ -66,7 +73,7 @@ class LoginController extends Controller
             if($request->header('Authorization')){
                 $logout = JWTAuth::invalidate($request->header('Authorization'));
                 if($logout){
-                    return $this->JsonExport(200, 'Success');
+                    return $this->JsonExport(200, 'Thành công');
                 } else {
                     return $this->JsonExport(403, 'Token invalid');
                 }
@@ -75,7 +82,7 @@ class LoginController extends Controller
             }
         } catch (\Exception $e){
             Log::error($e);
-            return $this->JsonExport(500, 'Please contact with admin for help!');
+            return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
         }
         
     }

@@ -76,7 +76,7 @@ class CustomersImport implements ToCollection, WithStartRow
     public static function afterImport(AfterImport $event)
     {
         //
-        return $this->JsonExport(500, 'Please contact with admin for help!');
+        return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
     }
 
     public function JsonExport($code, $msg, $data = null, $optinal = null)

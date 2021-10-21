@@ -42,10 +42,10 @@ class CustomerController extends Controller
             }
 
             $data = $data->get();
-            return $this->JsonExport(200, 'Success', $data);
+            return $this->JsonExport(200, 'Thành công', $data);
         } catch (\Exception $e){
             Log::error($e);
-            return $this->JsonExport(200, 'Success', []);
+            return $this->JsonExport(200, 'Thành công', []);
         }
     }
 
@@ -60,13 +60,13 @@ class CustomerController extends Controller
             try{
                 $data = Models\MstCustomer::where('customer_id', $request->id)->first();
                 if($data){
-                    return $this->JsonExport(200, 'Success', $data);
+                    return $this->JsonExport(200, 'Thành công', $data);
                 } else {
-                    return $this->JsonExport(403, 'Customer is not invalid');
+                    return $this->JsonExport(403, 'Khách hàng không hợp lệ');
                 }
             } catch (\Exception $e){
                 Log::error($e);
-                return $this->JsonExport(500, 'Please contact with admin for help!');
+                return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
             }
         }
     }
@@ -76,13 +76,33 @@ class CustomerController extends Controller
             'action' => 'required|in:update,create',
             'customer_name' => 'required|max:255|min:5',
             'tel_num' => 'required|max:14|regex:/^([0-9\s\-\+\(\)]*)$/',
-            'email' => 'required|max:255|email',
             'address' => 'required|max:255',
         ];
         if($request->action === "update"){
             $rules['id'] = 'required|digits_between:1,10';
+            $rules['email'] = 'required|max:255|email';
+        } else {
+            $rules['email'] = 'required|max:255|email|unique:mst_customer,email';
         }
-        $validator = Validator::make($request->all(), $rules);
+
+        $messages = [
+            'id.required' => 'ID không được trống.',
+            'action.required' => 'Action không được trống.',
+            'customer_name.required' => 'Tên không được trống.',
+            'customer_name.max' => 'Tên tối đa 255 ký tự.',
+            'customer_name.min' => 'Tên tối thiểu 5 ký tự.',
+            'email.required' => 'Email không được trống.',
+            'email.unique' => 'Email không được trùng.',
+            'email.max' => 'Email tối đa 255 ký tự.',
+            'email.email' => 'Email không đúng định dạng.',
+            'tel_num.required' => 'Điện thoại không được trống.',
+            'tel_num.max' => 'Điện thoại tối đa 14 số.',
+            'tel_num.regex' => 'Điện thoại không đúng định dạng.',
+            'tel_num.required' => 'Điện thoại không được trống.',
+            'address.required' => 'Địa chỉ không được trống.',
+            'address.max' => 'Địa chỉ tối đa 255 số.',
+        ];
+        $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {
             return $this->JsonExport(403, $validator->errors()->first());
         } else {
@@ -112,26 +132,36 @@ class CustomerController extends Controller
                 }
 
                 if($request->action === 'create'){
+                    $checkMail = Models\MstCustomer::where('email', $request->email)->first();
+                    if($checkMail){
+                        return $this->JsonExport(403, 'Email đã tồn tại');
+                    }
+
                     $action = Models\MstCustomer::insert($data);
                 } else {
+                    $checkMail = Models\MstCustomer::where('email', $request->email)->where('id', '!=', $request->id)->first();
+                    if($checkMail){
+                        return $this->JsonExport(403, 'Email đã tồn tại');
+                    }
+
                     $customer = Models\MstCustomer::where('customer_id', $request->id)->first();
                     if($customer){
                         $action = $customer->update($data);
                     } else {
-                        return $this->JsonExport(403, 'Customer is not invalid');
+                        return $this->JsonExport(403, 'Khách hàng không hợp lệ');
                     }
                 }
                 if($action){
                     DB::commit();
-                    return $this->JsonExport(200, 'Success');
+                    return $this->JsonExport(200, 'Thành công');
                 } else {
                     DB::rollback();
-                    return $this->JsonExport(403, 'Please review your data again.');
+                    return $this->JsonExport(403, 'Vui lòng kiểm tra lại dữ liệu.');
                 }
             } catch (\Exception $e){
                 DB::rollback();
                 Log::error($e);
-                return $this->JsonExport(500, 'Please contact with admin for help!');
+                return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
             }
         }
     }
@@ -140,7 +170,11 @@ class CustomerController extends Controller
         $rules = [
             'import_file' => 'required|mimes:xlsx,xls',
         ];
-        $validator = Validator::make($request->all(), $rules);
+        $messages = [
+            'import_file.required' => 'File không được trống.',
+            'import_file.mimes' => 'File phải thuộc định dạng xlsx, xls.',
+        ];
+        $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {
             return $this->JsonExport(403, $validator->errors()->first());
         } else {
@@ -150,11 +184,11 @@ class CustomerController extends Controller
                 if(count($import->getErrorRow()) > 0){
                     return $this->JsonExport(200, 'row '.implode( ',', $import->getErrorRow()). ' is error');
                 } else {
-                    return $this->JsonExport(200, 'Success');
+                    return $this->JsonExport(200, 'Thành công');
                 }
             } catch (\Exception $e){
                 Log::error($e);
-                return $this->JsonExport(500, 'Please contact with admin for help!');
+                return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
             }
         }
     }
@@ -193,7 +227,7 @@ class CustomerController extends Controller
             return Excel::download(new CustomersExport($data), 'CustomersExport-'.Carbon::now()->format('Y-m-d').'.xlsx');
         } catch (\Exception $e){
             Log::error($e);
-            return $this->JsonExport(500, 'Please contact with admin for help!');
+            return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
         }
     }
 }

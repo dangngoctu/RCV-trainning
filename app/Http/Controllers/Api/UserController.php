@@ -40,10 +40,10 @@ class UserController extends Controller
             }
 
             $data = $data->get();
-            return $this->JsonExport(200, 'Success', $data);
+            return $this->JsonExport(200, 'Thành công', $data);
         } catch (\Exception $e){
             Log::error($e);
-            return $this->JsonExport(200, 'Success', []);
+            return $this->JsonExport(200, 'Thành công', []);
         }
     }
 
@@ -58,13 +58,13 @@ class UserController extends Controller
             try{
                 $data = Models\MstUser::where('id', $request->id)->first();
                 if($data){
-                    return $this->JsonExport(200, 'Success', $data);
+                    return $this->JsonExport(200, 'Thành công', $data);
                 } else {
-                    return $this->JsonExport(403, 'User is not invalid');
+                    return $this->JsonExport(403, 'Người dùng không hợp lệ');
                 }
             } catch (\Exception $e){
                 Log::error($e);
-                return $this->JsonExport(500, 'Please contact with admin for help!');
+                return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
             }
         }
     }
@@ -80,15 +80,34 @@ class UserController extends Controller
 
         if($request->action === 'create' || $request->action === 'update'){
             $rules['name'] = 'required|max:255';
-            $rules['email'] = 'required|max:255|email';
             $rules['group_role'] = 'required';
+            if($request->action === "update"){
+                $rules['email'] = 'required|max:255|email|unique:mst_users,email';
+
+                if($request->has('password') && !empty($request->password)){
+                    $rules['password'] = 'same:re_password';
+                }
+            }
+            else {
+                $rules['email'] = 'required|max:255|email';
+                $rules['password'] = 'required|same:re_password';
+            }
         }
 
-        if($request->has('password') && !empty($request->password)){
-            $rules['password'] = 'same:re_password';
-        }
+        $messages = [
+            'id.required' => 'ID không được trống.',
+            'name.required' => 'Tên không được trống.',
+            'name.max' => 'Tên tối đa 255 ký tự.',
+            'group_role.required' => 'Nhóm không được trống.',
+            'email.required' => 'Email không được trống.',
+            'email.unique' => 'Email không được trùng.',
+            'email.max' => 'Email tối đa 255 ký tự.',
+            'email.email' => 'Email không đúng định dạng.',
+            'password.required' => 'Mật khẩu không được trống.',
+            'password.same' => 'Xác nhận mật khẩu không trùng khớp',
+        ];
 
-        $validator = Validator::make($request->all(), $rules);
+        $validator = Validator::make($request->all(), $rules, $messages);
         if ($validator->fails()) {
             return $this->JsonExport(403, $validator->errors()->first());
         } else {
@@ -117,19 +136,24 @@ class UserController extends Controller
                     }
 
                     if($request->action === 'create') {
-                        $checkUser = Models\MstUser::where('email', $request->email)->first();
+                        $checkUser = Models\MstUser::where('email', $request->email)->where('id', '!=', $request->id)->first();
                         if($checkUser){
-                            return $this->JsonExport(403, 'Email is exits');
+                            return $this->JsonExport(403, 'Email không được trùng.');
                         }
                         $data['email'] = $request->email;
                         $action = Models\MstUser::insert($data);
                     } else {
+                        $checkUser = Models\MstUser::where('email', $request->email)->first();
+                        if($checkUser){
+                            return $this->JsonExport(403, 'Email không được trùng.');
+                        }
+
                         $action = Models\MstUser::where('id', $request->id)->update($data);
                     }
                 } else {
                     $user = Models\MstUser::where('id', $request->id)->first();
                     if(!$user){
-                        return $this->JsonExport(403, 'User is not invalid');
+                        return $this->JsonExport(403, 'Người dùng không hợp lệ');
                     }
 
                     if($request->action === 'delete'){
@@ -145,14 +169,14 @@ class UserController extends Controller
                 }
                 if($action){
                     DB::commit();
-                    return $this->JsonExport(200, 'Success');
+                    return $this->JsonExport(200, 'Thành công');
                 } else {
                     DB::rollback();
-                    return $this->JsonExport(403, 'Please review your data again.');
+                    return $this->JsonExport(403, 'Vui lòng kiểm tra lại dữ liệu.');
                 }
             } catch (\Exception $e){
                 Log::error($e);
-                return $this->JsonExport(500, 'Please contact with admin for help!');
+                return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
             }
         }
     }
