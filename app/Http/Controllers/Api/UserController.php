@@ -39,7 +39,7 @@ class UserController extends Controller
                 $data = $data->where('is_active', $request->is_active);
             }
 
-            $data = $data->get();
+            $data = $data->select('id', 'name', 'email', 'group_role', 'is_active', 'is_delete')->get();
             return $this->JsonExport(200, 'Thành công', $data);
         } catch (\Exception $e){
             Log::error($e);

@@ -34,4 +34,8 @@ Route::group(['middleware' => 'auth.jwt'], function () {
         Route::post('/import', 'CustomerController@apiCustomerImport')->name('api_customer_import');
         Route::post('/export', 'CustomerController@apiCustomerExport')->name('api_customer_export');
     });
+
+    Route::group(['namespace' => 'Api', 'prefix' => 'product'], function () {
+        Route::post('/', 'ProductController@apiProductList')->name('api_product_list');
+    });
 });

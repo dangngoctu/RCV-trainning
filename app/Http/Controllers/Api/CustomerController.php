@@ -41,7 +41,7 @@ class CustomerController extends Controller
                 $data = $data->where('is_active', $request->is_active);
             }
 
-            $data = $data->get();
+            $data = $data->select('customer_id', 'customer_name', 'email', 'tel_num', 'address', 'is_active')->get();
             return $this->JsonExport(200, 'Thành công', $data);
         } catch (\Exception $e){
             Log::error($e);

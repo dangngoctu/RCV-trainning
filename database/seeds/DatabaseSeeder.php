@@ -15,5 +15,6 @@ class DatabaseSeeder extends Seeder
         factory(Models\MstUser::class, 200)->create();
         factory(Models\MstCustomer::class, 20)->create();
         $this->call(ShopTableSeeder::class);
+        $this->call(ProductTableSeeder::class);
     }
 }
