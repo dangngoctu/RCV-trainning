@@ -37,5 +37,7 @@ Route::group(['middleware' => 'auth.jwt'], function () {
 
     Route::group(['namespace' => 'Api', 'prefix' => 'product'], function () {
         Route::post('/', 'ProductController@apiProductList')->name('api_product_list');
+        Route::post('/detail', 'ProductController@apiProductDetail')->name('api_product_detail');
+        Route::post('/action', 'ProductController@apiProductAction')->name('api_product_action');
     });
 });

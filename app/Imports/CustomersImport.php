@@ -37,10 +37,10 @@ class CustomersImport implements ToCollection, WithStartRow
 
         if(count($data) > 2000){
             foreach(array_chunk($data, 10) as $key => $val){
-                Models\MstCustomer::insert($val);
+                Models\MstCustomer::create($val);
             }
         } else {
-            Models\MstCustomer::insert($data);
+            Models\MstCustomer::create($data);
         }
         info('---CUSTOMER END---');
     }

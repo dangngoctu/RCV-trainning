@@ -16,7 +16,7 @@ class CreateMstProductTable extends Migration
         Schema::dropIfExists('mst_product');
         
         Schema::create('mst_product', function (Blueprint $table) {
-            $table->bigInteger('product_id', true)->unsigned();
+            $table->string('product_id', 20)->unique();
             $table->string('product_name', 255);
             $table->string('product_image', 255)->nullable();
             $table->float('product_price')->default(0)->unsigned();

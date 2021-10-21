@@ -137,7 +137,7 @@ class CustomerController extends Controller
                         return $this->JsonExport(403, 'Email đã tồn tại');
                     }
 
-                    $action = Models\MstCustomer::insert($data);
+                    $action = Models\MstCustomer::create($data);
                 } else {
                     $checkMail = Models\MstCustomer::where('email', $request->email)->where('id', '!=', $request->id)->first();
                     if($checkMail){

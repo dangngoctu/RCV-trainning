@@ -141,7 +141,7 @@ class UserController extends Controller
                             return $this->JsonExport(403, 'Email không được trùng.');
                         }
                         $data['email'] = $request->email;
-                        $action = Models\MstUser::insert($data);
+                        $action = Models\MstUser::create($data);
                     } else {
                         $checkUser = Models\MstUser::where('email', $request->email)->first();
                         if($checkUser){

@@ -33,15 +33,19 @@ class MstProduct extends Model
 
 	protected $casts = [
 		'product_price' => 'float',
-		'is_sales' => 'int'
+		'is_sales' => 'int',
+		'product_id' => 'string'
 	];
 
 	protected $fillable = [
+		'product_id',
 		'product_name',
 		'product_image',
 		'product_price',
 		'is_sales',
-		'description'
+		'description',
+		'created_at',
+		'updated_at'
 	];
 
 	public function mst_order_details()

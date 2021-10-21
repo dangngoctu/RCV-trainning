@@ -19,7 +19,7 @@ class CreateMstOrderdetailTable extends Migration
             $table->bigInteger('order_id')->unsigned();
             $table->bigInteger('detail_line')->unsigned();
             $table->primary(['order_id', 'detail_line']);
-            $table->bigInteger('product_id')->unsigned();
+            $table->string('product_id', 20);
             $table->float('price_buy');
             $table->integer('quantity')->unsigned();
             $table->bigInteger('shop_id')->unsigned();
