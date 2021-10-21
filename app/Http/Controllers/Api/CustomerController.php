@@ -158,4 +158,42 @@ class CustomerController extends Controller
             }
         }
     }
+
+    public function apiCustomerExport(Request $request){
+        try {
+            $data = new Models\MstCustomer;
+            $is_filter = false;
+
+            if(!empty($request->customer_name) && $request->has('customer_name')){
+                $data = $data->where('customer_name', 'LIKE', '%'.$request->customer_name.'%');
+                $is_filter = true;
+            }
+
+            if(!empty($request->email) && $request->has('email')){
+                $data = $data->where('email', 'LIKE', '%'.$request->name.'%');
+                $is_filter = true;
+            }
+
+            if(!empty($request->address) && $request->has('address')){
+                $data = $data->where('address', 'LIKE', '%'.$request->address.'%');
+                $is_filter = true;
+            }
+
+            if(!empty($request->is_active) && $request->has('is_active')){
+                $data = $data->where('is_active', $request->is_active);
+                $is_filter = true;
+            }
+
+            if($is_filter === true){
+                $data = $data->get();
+            } else {
+                $data = $data->take(10)->get();
+            }
+           
+            return Excel::download(new CustomersExport($data), 'CustomersExport-'.Carbon::now()->format('Y-m-d').'.xlsx');
+        } catch (\Exception $e){
+            Log::error($e);
+            return $this->JsonExport(500, 'Please contact with admin for help!');
+        }
+    }
 }
