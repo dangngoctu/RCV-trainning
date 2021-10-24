@@ -7,7 +7,7 @@ const PublicRoutes = ({component: Component, ...rest}) => {
         <Route
             {...rest}
             render = {props => {
-                return !getToken() ? <Component {...props} /> : <Redirect to ={{pathname: '/user'}}/>
+                return !getToken() ? <Component {...props} /> : <Redirect to ={{pathname: '/home'}}/>
             }}
         />
     )

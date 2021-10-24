@@ -1,16 +1,19 @@
 import Home from './components/Home';
 import Login from './components/Login';
-import { BrowserRouter as Router, Route, Link, NavLink } from "react-router-dom";
+import Product from './components/Product';
+import { BrowserRouter as Router} from "react-router-dom";
 import PrivateRoutes from './utils/PrivateRoutes';
+import PublicRoutes from './utils/PublicRoutes';
 
 function App() {
 	return (
+		<div className="App">
 		<Router>
-			<div className="App">
-				<Route exact path="/" component={Login} />
-				<Route path="/home" component={Home} />
-			</div>
+			<PublicRoutes exact path="/" component={Login} />
+			<PrivateRoutes path="/home" component={Home} />
+			<PrivateRoutes path="/Product" component={Product} />
 		</Router>
+		</div>
 	);
 }
 

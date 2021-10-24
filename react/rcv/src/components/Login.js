@@ -2,21 +2,24 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { setUserSession} from '../utils/Common';
+import { useHistory } from "react-router-dom";
 
 const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [remember_token, setRememberToken] = useState('');
+    let history = useHistory();
 
-    const HandleLogin = () => {
+    const HandleLogin = (props) => {
         axios.post("http://training.uk/api/login", {
             email: email,
             password: password,
             remember_token: remember_token
         }). then(response => {
             if(response.data.code == 200){
-                setUserSession(response.data.code);
+                setUserSession(response.data.data);
+                history.push("/home");
             } else {
                 Swal.fire({
                     title: 'Lỗi!',
@@ -25,14 +28,15 @@ const Login = () => {
                 })
             }
         }). catch (error => {
+            console.log(error);
             Swal.fire({
                 title: 'Lỗi!',
-                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                text: error,
                 icon: 'error',
             })
         });
     }
-
+    
     return (
         <div>
             <div className="login-page">

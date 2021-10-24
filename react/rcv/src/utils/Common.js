@@ -5,3 +5,7 @@ export const setUserSession = (token) => {
 export const getToken = () => {
     return sessionStorage.getItem('token') || null;
 }
+
+export const removeToken = () => {
+    sessionStorage.removeItem('token');
+}

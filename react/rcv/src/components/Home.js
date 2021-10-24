@@ -2,7 +2,7 @@ import React from 'react'
 import Header from './Header';
 import Navbar from './Navbar';
 
-const home = () => {
+const Home = () => {
     return (
         <div>
             <Header />
@@ -32,4 +32,4 @@ const home = () => {
     )
 }
 
-export default home
+export default Home
