@@ -14,10 +14,10 @@ const Header = () => {
 		{
 			headers: {
 			'Content-Type': 'application/json',
-			'Authorization': 'Bearer '+getToken()
+			'Authorization': 'Bearer ' + getToken()
 			}
-		}). then(response => {
-            if(response.data.code == 200){
+		}).then(response => {
+            if(response.data.code === 200){
                 removeToken();
 				history.push("/");
             } else {
@@ -27,7 +27,7 @@ const Header = () => {
                     icon: 'warning',
                 })
             }
-        }). catch (error => {
+        }).catch(error => {
             Swal.fire({
                 title: 'Lỗi!',
                 text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
@@ -41,7 +41,7 @@ const Header = () => {
 			<nav className="main-header navbar navbar-expand navbar-white navbar-light">
 				<ul className="navbar-nav ml-auto">
 					<li className="nav-item">
-						<a onClick={HandleLogout} className="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
+						<a href="#" onClick={HandleLogout} className="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
 							<i className="fas fa-door-closed"></i>
 						</a>
 					</li>

@@ -19,7 +19,7 @@ class CreateMstProductTable extends Migration
             $table->string('product_id', 20)->unique();
             $table->string('product_name', 255);
             $table->string('product_image', 255)->nullable();
-            $table->float('product_price')->default(0)->unsigned();
+            $table->decimal('product_price')->default(0)->unsigned();
             $table->tinyInteger('is_sales')->default(1)->comment('0 : Dừng bán hoặc dừng sản xuất  , 1: Có hàng bán');
             $table->longtext('description');
             $table->index(['product_id']);

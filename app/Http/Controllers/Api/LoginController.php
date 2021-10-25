@@ -40,7 +40,9 @@ class LoginController extends Controller
                 DB::beginTransaction();
                 $credentials = [
                     'email' => $request->email,
-                    'password' => $request->password
+                    'password' => $request->password,
+                    'is_active' => 1,
+                    'is_delete' => 0
                 ];
     
                 if (!$token = auth('api')->attempt($credentials)) {
@@ -49,9 +51,19 @@ class LoginController extends Controller
 
                 $userData = auth('api')->user();
                 if($request->has('remember_token') && !empty($request->remember_token)){
-                    $data['remember_token'] = $request->remember_token;
+                    $data['remember_token'] = substr($token, 0, 99);
                 }
                 $data['last_login_at'] = Carbon::now();
+                $clientIP = $_SERVER['HTTP_CLIENT_IP'] 
+                ?? $_SERVER["HTTP_CF_CONNECTING_IP"] 
+                ?? $_SERVER['HTTP_X_FORWARDED'] 
+                ?? $_SERVER['HTTP_X_FORWARDED_FOR'] 
+                ?? $_SERVER['HTTP_FORWARDED'] 
+                ?? $_SERVER['HTTP_FORWARDED_FOR'] 
+                ?? $_SERVER['REMOTE_ADDR'] 
+                ?? '0.0.0.0';
+
+                $data['last_login_ip'] = $clientIP;
 
                 $updateToken = $userData->update($data);
                 if(!$updateToken){

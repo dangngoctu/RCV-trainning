@@ -58,6 +58,6 @@ class ProductTableSeeder extends Seeder
 			]
 		];
 
-		Models\MstProduct::create($data);
+		Models\MstProduct::insert($data);
     }
 }

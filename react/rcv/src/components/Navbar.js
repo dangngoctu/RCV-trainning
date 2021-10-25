@@ -8,9 +8,8 @@ const Navbar = () => {
             <aside className="main-sidebar sidebar-dark-primary elevation-4">
                 {/* Brand Logo */}
                 <Link to="/home">
-                    <a className="brand-link">
-                        <img src="dist/img/AdminLTELogo.png" alt="AdminLTE Logo" className="brand-image img-circle elevation-3" style={{ opacity: '.8' }} />
-                        <span className="brand-text font-weight-light">Training</span>
+                    <a href="#" className="brand-link">
+                        <img src="dist/img/sidebar.png" alt="RiverCrane Logo" />
                     </a>
                 </Link>
                 {/* Sidebar */}
@@ -19,20 +18,12 @@ const Navbar = () => {
                     {/* Sidebar Menu */}
                     <nav className="mt-2">
                         <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                            <li className="nav-item">
-                                <a href="pages/gallery.html" className="nav-link">
-                                    <i className="nav-icon far fa-image" />
-                                    <p>
-                                        Gallery
-                                    </p>
-                                </a>
-                            </li>
                             <Link to="/product">
                                 <li className="nav-item">
-                                    <a className="nav-link">
-                                        <i className="nav-icon fas fa-columns" />
+                                    <a href="pages/gallery.html" className="nav-link">
+                                        <i className="nav-icon far fa-image" />
                                         <p>
-                                            Kanban Board
+                                            Sản phẩm
                                         </p>
                                     </a>
                                 </li>

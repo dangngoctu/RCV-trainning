@@ -25,6 +25,6 @@ class ShopTableSeeder extends Seeder
 			]
 		];
 
-		Models\MstShop::create($data);
+		Models\MstShop::insert($data);
     }
 }

@@ -16,8 +16,8 @@ const Login = () => {
             email: email,
             password: password,
             remember_token: remember_token
-        }). then(response => {
-            if(response.data.code == 200){
+        }).then(response => {
+            if(response.data.code === 200){
                 setUserSession(response.data.data);
                 history.push("/home");
             } else {
@@ -27,11 +27,10 @@ const Login = () => {
                     icon: 'warning',
                 })
             }
-        }). catch (error => {
-            console.log(error);
+        }).catch (error => {
             Swal.fire({
                 title: 'Lỗi!',
-                text: error,
+                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
                 icon: 'error',
             })
         });
@@ -43,7 +42,7 @@ const Login = () => {
                 <div className="login-box">
                     {/* /.login-logo */}
                     <div className="login-logo">
-                        <a href="../../index2.html"><b>Admin</b>LTE</a>
+                        <img src="dist/img/logo2.png" alt="Logo"  style={{ opacity: '.8' }} />
                     </div>
                     <div className="card">
                         <div className="card-body login-card-body">

@@ -15,6 +15,7 @@ use App\Imports\CustomersImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
+use Yajra\Datatables\Datatables;
 
 class ProductController extends Controller
 {
@@ -26,7 +27,6 @@ class ProductController extends Controller
     public function apiProductList(Request $request){
         try{
             $data = new Models\MstProduct;
-
             if(!empty($request->name) && $request->has('name')){
                 $data = $data->where('product_name', 'LIKE', '%'.$request->name.'%');
             }
@@ -43,8 +43,18 @@ class ProductController extends Controller
                 $data = $data->where('product_price', '<=', $request->price_to);
             }
 
-            $data = $data->select('product_id', 'product_name', 'product_price', 'is_sales', 'description')->get();
-            return $this->JsonExport(200, 'Thành công', $data);
+            $data = $data->select('product_id', 'product_name', 'product_price', 'is_sales', 'description');
+            $data = Datatables::of($data)
+                    ->addColumn('is_sales_show', function ($v) {
+                        if($v->is_sales == 1){
+                            return 'Đang bán';
+                        } else {
+                            return 'Ngừng bán';
+                        }
+                    })
+                    ->rawColumns(['action'])
+                    ->make(true);
+            return $this->JsonExport(200, 'Thành công', $data->original);
         } catch (\Exception $e){
             Log::error($e);
             return $this->JsonExport(200, 'Thành công', []);
@@ -53,7 +63,7 @@ class ProductController extends Controller
 
     public function apiProductDetail(Request $request){
         $rules = [
-            'id' => 'required|digits_between:1,10'
+            'id' => 'required'
         ];
         $validator = Validator::make($request->all(), $rules);
         if ($validator->fails()) {
@@ -79,11 +89,11 @@ class ProductController extends Controller
             'product_name' => 'required|max:255|min:5',
             'product_price' => 'required|min:0|integer',
             'file' => 'mimes:png,jpg,jpeg|max:2048',
-            'is_sales' => 'required|in:0,1',
+            'is_sales' => 'required|in:0,1,2',
         ];
 
         if($request->action != 'create') {
-            $rules['id'] = 'required|digits_between:1,10';
+            $rules['id'] = 'required';
         } 
 
         $messages = [
