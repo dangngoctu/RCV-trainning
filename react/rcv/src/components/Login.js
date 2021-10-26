@@ -48,7 +48,7 @@ const Login = () => {
                         <div className="card-body login-card-body">
                             <form>
                                 <div className="input-group mb-3">
-                                    <input type="email" className="form-control" placeholder="Email"
+                                    <input type="email" className="form-control" placeholder="Email" min="5" required
                                         value = {email}
                                         onChange = {e => setEmail(e.target.value)}
                                     />
@@ -72,7 +72,7 @@ const Login = () => {
                                 <div className="row">
                                     <div className="col-8">
                                         <div className="icheck-primary">
-                                            <input type="checkbox" id="remember" 
+                                            <input type="checkbox" id="remember" required
                                                 onChange = {e => setRememberToken(e.target.checked)}
                                             />
                                             <label htmlFor="remember">

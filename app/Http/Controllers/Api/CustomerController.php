@@ -30,7 +30,7 @@ class CustomerController extends Controller
             }
 
             if(!empty($request->email) && $request->has('email')){
-                $data = $data->where('email', 'LIKE', '%'.$request->name.'%');
+                $data = $data->where('email', 'LIKE', '%'.$request->email.'%');
             }
 
             if(!empty($request->address) && $request->has('address')){

@@ -88,13 +88,19 @@ class ProductController extends Controller
             'action' => 'required|in:update,create,delete',
             'product_name' => 'required|max:255|min:5',
             'product_price' => 'required|min:0|integer',
-            'file' => 'mimes:png,jpg,jpeg|max:2048',
+            'file' => 'max:2048',
             'is_sales' => 'required|in:0,1,2',
         ];
 
         if($request->action != 'create') {
             $rules['id'] = 'required';
         } 
+
+        if($request->action === 'delete'){
+            $rules = [
+                'id' => 'required',
+            ];
+        }
 
         $messages = [
             'id.required' => 'ID không được trống.',
@@ -113,7 +119,7 @@ class ProductController extends Controller
         if ($validator->fails()) {
             return $this->JsonExport(403, $validator->errors()->first());
         } else {
-            try {
+            // try {
                 DB::beginTransaction();
                 $data = [];
                 $dir_file = public_path('img/product');
@@ -195,11 +201,11 @@ class ProductController extends Controller
                     DB::rollback();
                     return $this->JsonExport(403, 'Vui lòng kiểm tra lại dữ liệu.');
                 }
-            } catch (\Exception $e){
-                DB::rollback();
-                Log::error($e);
-                return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
-            }
+            // } catch (\Exception $e){
+            //     DB::rollback();
+            //     Log::error($e);
+            //     return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
+            // }
         }
     }
 }

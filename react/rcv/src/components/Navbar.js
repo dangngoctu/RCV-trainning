@@ -8,9 +8,9 @@ const Navbar = () => {
             <aside className="main-sidebar sidebar-dark-primary elevation-4">
                 {/* Brand Logo */}
                 <Link to="/home">
-                    <a href="#" className="brand-link">
+                    <span href="#" className="brand-link">
                         <img src="dist/img/sidebar.png" alt="RiverCrane Logo" />
-                    </a>
+                    </span>
                 </Link>
                 {/* Sidebar */}
                 <div className="sidebar">
@@ -20,12 +20,32 @@ const Navbar = () => {
                         <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <Link to="/product">
                                 <li className="nav-item">
-                                    <a href="pages/gallery.html" className="nav-link">
-                                        <i className="nav-icon far fa-image" />
+                                    <span href="pages/gallery.html" className="nav-link">
+                                        <i className="fas fa-box"></i>
                                         <p>
                                             Sản phẩm
                                         </p>
-                                    </a>
+                                    </span>
+                                </li>
+                            </Link>
+                            <Link to="/customer">
+                                <li className="nav-item">
+                                    <span href="pages/gallery.html" className="nav-link">
+                                        <i className="fas fa-user-tie"></i>
+                                        <p>
+                                            Customer
+                                        </p>
+                                    </span>
+                                </li>
+                            </Link>
+                            <Link to="/customer">
+                                <li className="nav-item">
+                                    <span href="pages/gallery.html" className="nav-link">
+                                        <i className="fas fa-user"></i>
+                                        <p>
+                                            User
+                                        </p>
+                                    </span>
                                 </li>
                             </Link>
                         </ul>
