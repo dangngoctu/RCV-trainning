@@ -37,10 +37,10 @@ class CustomersImport implements ToCollection, WithStartRow
 
         if(count($data) > 2000){
             foreach(array_chunk($data, 10) as $key => $val){
-                Models\MstCustomer::create($val);
+                Models\MstCustomer::insert($val);
             }
         } else {
-            Models\MstCustomer::create($data);
+            Models\MstCustomer::insert($data);
         }
         info('---CUSTOMER END---');
     }
@@ -61,13 +61,13 @@ class CustomersImport implements ToCollection, WithStartRow
         {
             $rules = [
                 '0' => 'required|max:255|min:5',
-                '1' => 'required|max:255|email',
+                '1' => 'required|max:255|email|unique:mst_customer,email',
                 '2' => 'required|max:14|regex:/^([0-9\s\-\+\(\)]*)$/',
                 '3' => 'required|max:255',
             ];
             $validator = Validator::make($row->toArray(), $rules);
             if($validator->fails()){
-                array_push($this->row_error, $key);
+                array_push($this->row_error, $key+1);
                 $rows->forget($key);
             }
         }

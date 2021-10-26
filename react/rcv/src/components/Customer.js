@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import Header from './Header';
 import Navbar from './Navbar';
+import ModalImportCustomer from './ModalImportCustomer';
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { timers } from 'jquery';
 
 
 const Customer = () => {
@@ -32,7 +34,6 @@ const Customer = () => {
         {
             name: 'Địa chỉ',
             selector: row => row.address,
-            sortable: true
         },
         {
             name: 'Điện thoại',
@@ -50,6 +51,7 @@ const Customer = () => {
         selectAllRowsItem: true,
         selectAllRowsItemText: 'Tất cả',
     };
+    const FileDownload = require('js-file-download');
 
     useEffect(() => {
         CustomerData();
@@ -62,28 +64,50 @@ const Customer = () => {
             email: window.$('#FormSearch #InputEmail').val(),
             address: window.$('#FormSearch #InputAddress').val()
         },
-        {
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + getToken()
+                }
+            }).then(response => {
+                if (response.data.code === 200) {
+                    setData([...response.data.data]);
+                } else {
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: response.data.msg,
+                        icon: 'warning',
+                    })
+                }
+            }).catch(error => {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                    icon: 'error',
+                })
+            });
+    }
+
+    const ExportCustomer = () => {
+        fetch("http://training.uk/api/customer/export", {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + getToken()
             }
-        }).then(response => {
-            if (response.data.code === 200) {
-                setData([...response.data.data]);
-            } else {
-                Swal.fire({
-                    title: 'Lỗi!',
-                    text: response.data.msg,
-                    icon: 'warning',
-                })
-            }
-        }).catch(error => {
-            Swal.fire({
-                title: 'Lỗi!',
-                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                icon: 'error',
-            })
-        });
+        }).then((res) => {
+            return res.blob();
+        }).then((blob) => {
+            const href = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = href;
+            link.setAttribute('download', 'CustomerExport_'+Date.now()+'.xlsx'); //or any other extension
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }).catch((err) => {
+            return Promise.reject({ Error: 'Something Went Wrong', err });
+        })
     }
 
     const ClearSearch = () => {
@@ -91,10 +115,16 @@ const Customer = () => {
         CustomerData();
     }
 
+    const ShowModalImport = () => {
+        window.$('#modalImportCustomer #customerImportFile').val('');
+        window.$('#modalImportCustomer').modal('show');
+    }
+
     return (
         <div>
             <Header />
             <Navbar />
+            <ModalImportCustomer customerData={CustomerData} />
             <div className="content-wrapper">
                 <div className='pd-15'>
                     <div className="filter mg-b-10">
@@ -143,10 +173,10 @@ const Customer = () => {
                                 <input type="button" className="btn btn-block btn-success" value="Thêm mới" />
                             </div>
                             <div className="col-12 col-md-2">
-                                <input type="button" className="btn btn-block btn-success" value="ImportCSV" />
+                                <input type="button" className="btn btn-block btn-success" value="ImportCSV" onClick={ShowModalImport} />
                             </div>
                             <div className="col-12 col-md-2">
-                                <input type="button" className="btn btn-block btn-success" value="ExportCSV" />
+                                <input type="button" className="btn btn-block btn-success" value="ExportCSV" onClick={ExportCustomer} />
                             </div>
                             <div className="col-12 col-md-2">
                                 <input type="button" className="btn btn-block btn-primary" onClick={CustomerData} value="Tìm kiếm" />

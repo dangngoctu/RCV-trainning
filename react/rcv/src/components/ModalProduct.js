@@ -109,7 +109,7 @@ const ModalProduct = (props) => {
                                     </div>
                                 </div>
                             </div>
-                            <div className="modal-footer justify-content-between">
+                            <div className="modal-footer justify-content-between mg-t-10">
                                 <button type="button" className="btn btn-default" data-dismiss="modal" >Đóng</button>
                                 <button type="button" className="btn btn-primary" onClick={SubmitProduct}>Lưu</button>
                             </div>

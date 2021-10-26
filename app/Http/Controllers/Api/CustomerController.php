@@ -12,6 +12,7 @@ use Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use App\Imports\CustomersImport;
+use App\Exports\CustomersExport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class CustomerController extends Controller
@@ -194,7 +195,7 @@ class CustomerController extends Controller
     }
 
     public function apiCustomerExport(Request $request){
-        try {
+        // try {
             $data = new Models\MstCustomer;
             $is_filter = false;
 
@@ -225,9 +226,9 @@ class CustomerController extends Controller
             }
            
             return Excel::download(new CustomersExport($data), 'CustomersExport-'.Carbon::now()->format('Y-m-d').'.xlsx');
-        } catch (\Exception $e){
-            Log::error($e);
-            return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
-        }
+        // } catch (\Exception $e){
+        //     Log::error($e);
+        //     return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
+        // }
     }
 }
