@@ -3,6 +3,7 @@ import { removeToken, getToken } from '../utils/Common';
 import Header from './Header';
 import Navbar from './Navbar';
 import ModalImportCustomer from './ModalImportCustomer';
+import ModalCustomer from './ModalCustomer';
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -16,6 +17,8 @@ const Customer = () => {
     const [email, setEmail] = useState('');
     const [address, setAddress] = useState('');
     const [is_active, setIsActive] = useState('');
+    const [action, setAction] = useState('create');
+    const [id, setId] = useState('');
     const columns = [
         {
             name: '#',
@@ -41,7 +44,7 @@ const Customer = () => {
         },
         {
             name: '',
-            selector: (row) => <div><span data-toggle="tooltip" data-placement="top" title="View Product" data-html="true" className="btn-action table-action-view cursor-pointer text-success mg-l-5" data-id={row.id}><i className="fa fa-edit"></i></span>
+            selector: (row) => <div><span data-toggle="tooltip" data-placement="top" title="View Product" data-html="true" className="btn-action table-action-view cursor-pointer text-success mg-l-5" data-id={row.customer_id} onClick={() => onUpdate(row.customer_id)}><i className="fa fa-edit"></i></span>
             </div>
         }
     ];
@@ -88,20 +91,41 @@ const Customer = () => {
             });
     }
 
+    const ClearSearch = () => {
+        window.$('#FormSearch')[0].reset();
+        CustomerData();
+    }
+
+    const ClearModal = () => {
+        window.$('#FormModalCustomer')[0].reset();
+    }
+
+    const ShowModalImport = () => {
+        window.$('#FormModalImport')[0].reset();
+        window.$('#modalImportCustomer #customerImportFile').val('');
+        window.$('#modalImportCustomer').modal('show');
+    }
+
     const ExportCustomer = () => {
         fetch("http://training.uk/api/customer/export", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + getToken()
-            }
+            },
+            body: JSON.stringify({ 
+                customer_name: window.$('#FormSearch #InputName').val(),
+                is_active: window.$('#FormSearch #InputIsActive').val(),
+                email: window.$('#FormSearch #InputEmail').val(),
+                address: window.$('#FormSearch #InputAddress').val() 
+            })
         }).then((res) => {
             return res.blob();
         }).then((blob) => {
             const href = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = href;
-            link.setAttribute('download', 'CustomerExport_'+Date.now()+'.xlsx'); //or any other extension
+            link.setAttribute('download', 'CustomerExport_'+Date.now()+'.xlsx');
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -110,14 +134,49 @@ const Customer = () => {
         })
     }
 
-    const ClearSearch = () => {
-        window.$('#FormSearch')[0].reset();
-        CustomerData();
+    const ShowModalCustomer = () => {
+        ClearModal();
+        setAction('create');
+        window.$('#modalCustomer .modal-title').html('Thêm Khách hàng');
+        window.$('#modalCustomer').modal('show');
     }
 
-    const ShowModalImport = () => {
-        window.$('#modalImportCustomer #customerImportFile').val('');
-        window.$('#modalImportCustomer').modal('show');
+    const onUpdate = (customer_id) => {
+        ClearModal();
+        setAction('update');
+        setId(customer_id);
+        window.$('#modalCustomer .modal-title').html('Cập nhật khách hàng');
+        axios.post("http://training.uk/api/customer/detail", {
+            id: customer_id
+        },{
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + getToken()
+        }
+        }).then(response => {
+            if (response.data.code === 200) {
+                window.$('#customer_name').val(response.data.data.customer_name);
+                window.$('#tel_num').val(response.data.data.tel_num);
+                window.$('#address').val(response.data.data.address);
+                window.$('#email').val(response.data.data.email);
+                if(response.data.data.is_active == 1){
+                    window.$('#is_active').prop('checked', true);
+                }
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: response.data.msg,
+                    icon: 'warning',
+                })
+            }
+        }).catch(error => {
+            Swal.fire({
+                title: 'Lỗi!',
+                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                icon: 'error',
+            })
+        });
+        window.$('#modalCustomer').modal('show');
     }
 
     return (
@@ -125,6 +184,7 @@ const Customer = () => {
             <Header />
             <Navbar />
             <ModalImportCustomer customerData={CustomerData} />
+            <ModalCustomer customerData={CustomerData} action={action} id={id}/>
             <div className="content-wrapper">
                 <div className='pd-15'>
                     <div className="filter mg-b-10">
@@ -170,13 +230,13 @@ const Customer = () => {
 
                         <div className="row">
                             <div className="col-12 col-md-2">
-                                <input type="button" className="btn btn-block btn-success" value="Thêm mới" />
+                                <input type="button" className="btn btn-block btn-success" onClick={ShowModalCustomer} value="Thêm mới"/>
                             </div>
                             <div className="col-12 col-md-2">
-                                <input type="button" className="btn btn-block btn-success" value="ImportCSV" onClick={ShowModalImport} />
+                                <input type="button" className="btn btn-block btn-success" onClick={ShowModalImport} value="ImportCSV"/>
                             </div>
                             <div className="col-12 col-md-2">
-                                <input type="button" className="btn btn-block btn-success" value="ExportCSV" onClick={ExportCustomer} />
+                                <input type="button" className="btn btn-block btn-success" onClick={ExportCustomer}value="ExportCSV"/>
                             </div>
                             <div className="col-12 col-md-2">
                                 <input type="button" className="btn btn-block btn-primary" onClick={CustomerData} value="Tìm kiếm" />

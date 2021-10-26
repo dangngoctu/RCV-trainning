@@ -140,7 +140,7 @@ class CustomerController extends Controller
 
                     $action = Models\MstCustomer::create($data);
                 } else {
-                    $checkMail = Models\MstCustomer::where('email', $request->email)->where('id', '!=', $request->id)->first();
+                    $checkMail = Models\MstCustomer::where('email', $request->email)->where('customer_id', '!=', $request->id)->first();
                     if($checkMail){
                         return $this->JsonExport(403, 'Email đã tồn tại');
                     }
@@ -195,7 +195,7 @@ class CustomerController extends Controller
     }
 
     public function apiCustomerExport(Request $request){
-        // try {
+        try {
             $data = new Models\MstCustomer;
             $is_filter = false;
 
@@ -226,9 +226,9 @@ class CustomerController extends Controller
             }
            
             return Excel::download(new CustomersExport($data), 'CustomersExport-'.Carbon::now()->format('Y-m-d').'.xlsx');
-        // } catch (\Exception $e){
-        //     Log::error($e);
-        //     return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
-        // }
+        } catch (\Exception $e){
+            Log::error($e);
+            return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
+        }
     }
 }

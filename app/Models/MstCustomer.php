@@ -39,7 +39,7 @@ class MstCustomer extends Model
 	protected $fillable = [
 		'customer_name',
 		'email',
-		'phone',
+		'tel_num',
 		'address',
 		'is_acive',
 		'description'
