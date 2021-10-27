@@ -1,23 +1,30 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { setUserSession} from '../utils/Common';
+import { setUserSession } from '../utils/Common';
 import { useHistory } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
-
+    const {
+        register,
+        formState: { errors },
+        handleSubmit
+    } = useForm({
+        mode: "onBlur" // "onChange"
+    });
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [remember_token, setRememberToken] = useState('');
     let history = useHistory();
 
-    const HandleLogin = (props) => {
+    const HandleLogin = () => {
         axios.post("http://training.uk/api/login", {
             email: email,
             password: password,
             remember_token: remember_token
         }).then(response => {
-            if(response.data.code === 200){
+            if (response.data.code === 200) {
                 setUserSession(response.data.data);
                 history.push("/home");
             } else {
@@ -27,7 +34,7 @@ const Login = () => {
                     icon: 'warning',
                 })
             }
-        }).catch (error => {
+        }).catch(error => {
             Swal.fire({
                 title: 'Lỗi!',
                 text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
@@ -35,22 +42,33 @@ const Login = () => {
             })
         });
     }
-    
+
     return (
         <div>
             <div className="login-page">
                 <div className="login-box">
                     {/* /.login-logo */}
                     <div className="login-logo">
-                        <img src="dist/img/logo2.png" alt="Logo"  style={{ opacity: '.8' }} />
+                        <img src="dist/img/logo2.png" alt="Logo" style={{ opacity: '.8' }} />
                     </div>
                     <div className="card">
                         <div className="card-body login-card-body">
                             <form>
                                 <div className="input-group mb-3">
-                                    <input type="email" className="form-control" placeholder="Email" min="5" required
-                                        value = {email}
-                                        onChange = {e => setEmail(e.target.value)}
+                                    <input type="email" className="form-control" placeholder="Email"
+                                        {...register("email", {
+                                            required: 'Email không được trống!',
+                                            minLength: {
+                                                value: 5,
+                                                message: 'Email tối thiểu 5 kí tự!'
+                                            },
+                                            pattern: {
+                                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                message: 'Email không hợp lệ',
+                                            }
+                                        })}
+                                        value={email}
+                                        onChange={e => setEmail(e.target.value)}
                                     />
                                     <div className="input-group-append">
                                         <div className="input-group-text">
@@ -58,10 +76,14 @@ const Login = () => {
                                         </div>
                                     </div>
                                 </div>
+                                {errors.email && <p className="text-danger">{errors.email.message}</p>}
                                 <div className="input-group mb-3">
-                                    <input type="password" className="form-control" placeholder="Password" 
-                                        value = {password}
-                                        onChange = {e => setPassword(e.target.value)}
+                                    <input type="password" className="form-control" placeholder="Password"
+                                        {...register("password", {
+                                            required: 'Mật khẩu không được trống!'
+                                        })}
+                                        value={password}
+                                        onChange={e => setPassword(e.target.value)}
                                     />
                                     <div className="input-group-append">
                                         <div className="input-group-text">
@@ -69,11 +91,12 @@ const Login = () => {
                                         </div>
                                     </div>
                                 </div>
+                                {errors.password && <p className="text-danger">{errors.password.message}</p>}
                                 <div className="row">
                                     <div className="col-8">
                                         <div className="icheck-primary">
                                             <input type="checkbox" id="remember" required
-                                                onChange = {e => setRememberToken(e.target.checked)}
+                                                onChange={e => setRememberToken(e.target.checked)}
                                             />
                                             <label htmlFor="remember">
                                                 Remember Me
@@ -82,7 +105,7 @@ const Login = () => {
                                     </div>
                                     {/* /.col */}
                                     <div className="col-4">
-                                        <input type="button" onClick={HandleLogin} className="btn btn-primary btn-block" value="Sign In"/>
+                                        <input type="button" onClick={handleSubmit(HandleLogin)} className="btn btn-primary btn-block" value="Sign In" />
                                     </div>
                                     {/* /.col */}
                                 </div>
