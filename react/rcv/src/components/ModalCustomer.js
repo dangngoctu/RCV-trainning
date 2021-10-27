@@ -3,9 +3,17 @@ import { removeToken, getToken } from '../utils/Common';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useHistory } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 const ModalCustomer = (props) => {
 
+    const {
+        register,
+        formState: { errors },
+        handleSubmit
+    } = useForm({
+        mode: "onBlur" // "onChange"
+    });
     const [customer_name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [tel_num, setTelNum] = useState('');
@@ -77,14 +85,34 @@ const ModalCustomer = (props) => {
                                                 <div className="col-sm-9">
                                                     <input type="text" className="form-control" id="customer_name" placeholder="Tên khách hàng" required
                                                         onChange={e => setName(e.target.value)}
+                                                        {...register("name", {
+                                                            required: 'Tên không được trống!',
+                                                            minLength: {
+                                                                value: 5,
+                                                                message: 'Tên phải lớn hơn 5 kí tự.'
+                                                            }
+                                                        })}
                                                     />
+                                                    {errors.name && <p className="text-danger">{errors.name.message}</p>}
                                                 </div>
 
                                                 <label htmlFor="inputEmail" className="col-sm-3 col-form-label mg-t-10">Email</label>
                                                 <div className="col-sm-9">
                                                     <input type="text" className="form-control mg-t-10" id="email" placeholder="Email" required
                                                         onChange={e => setEmail(e.target.value)}
+                                                        {...register("email", {
+                                                            required: 'Email không được trống!',
+                                                            minLength: {
+                                                                value: 5,
+                                                                message: 'Email tối thiểu 5 kí tự!'
+                                                            },
+                                                            pattern: {
+                                                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                                message: 'Email không hợp lệ',
+                                                            }
+                                                        })}
                                                     />
+                                                    {errors.email && <p className="text-danger">{errors.email.message}</p>}
                                                 </div>
 
                                                 <label htmlFor="inputTelNum" className="col-sm-3 col-form-label mg-t-10">Điện thoại</label>
@@ -112,7 +140,7 @@ const ModalCustomer = (props) => {
                             </div>
                             <div className="modal-footer justify-content-between mg-t-10">
                                 <button type="button" className="btn btn-default" data-dismiss="modal" >Đóng</button>
-                                <button type="button" className="btn btn-primary" onClick={SubmitCustomer}>Lưu</button>
+                                <button type="button" className="btn btn-primary" onClick={handleSubmit(SubmitCustomer)}>Lưu</button>
                             </div>
                         </div>
                     </div>

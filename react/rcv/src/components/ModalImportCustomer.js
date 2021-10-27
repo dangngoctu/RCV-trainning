@@ -3,9 +3,17 @@ import { removeToken, getToken } from '../utils/Common';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useHistory } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 const ModalImportCustomer = (props) => {
 
+    const {
+        register,
+        formState: { errors },
+        handleSubmit
+    } = useForm({
+        mode: "onBlur" // "onChange"
+    });
     const [uploadFile, setUploadFile] = useState();
     let history = useHistory();
     const ImportCustomer = () => {
@@ -61,14 +69,19 @@ const ModalImportCustomer = (props) => {
                                 <div className="col-12 col-md-8">
                                     <form id="FormModalImport">
                                         <div className="col-12 col-md-12">
-                                            <input type="file" id="customerImportFile" onChange={(e) => setUploadFile(e.target.files[0])} accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"/>
+                                            <input type="file" id="customerImportFile" onChange={(e) => setUploadFile(e.target.files[0])} accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                                {...register("file", {
+                                                    required: 'File import không được trống!'
+                                                })}
+                                            />
+                                            {errors.file && <p className="text-danger">{errors.file.message}</p>}
                                         </div>
                                     </form>
                                 </div>
                             </div>
                             <div className="modal-footer justify-content-between mg-t-10">
                                 <button type="button" className="btn btn-default" data-dismiss="modal" >Đóng</button>
-                                <button type="button" className="btn btn-primary" onClick={ImportCustomer}>Lưu</button>
+                                <button type="button" className="btn btn-primary" onClick={handleSubmit(ImportCustomer)}>Lưu</button>
                             </div>
                         </div>
                     </div>
