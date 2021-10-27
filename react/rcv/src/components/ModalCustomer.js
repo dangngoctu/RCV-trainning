@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -12,7 +12,7 @@ const ModalCustomer = (props) => {
         formState: { errors },
         handleSubmit
     } = useForm({
-        mode: "onBlur" // "onChange"
+        mode: "onChange" // "onChange"
     });
     const [customer_name, setName] = useState('');
     const [email, setEmail] = useState('');

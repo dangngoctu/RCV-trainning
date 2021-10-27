@@ -12,7 +12,7 @@ const ModalProduct = (props) => {
         formState: { errors },
         handleSubmit
     } = useForm({
-        mode: "onBlur" // "onChange"
+        mode: "onChange" // "onChange"
     });
     const [product_name, setName] = useState('');
     const [is_sales, setIsSales] = useState(1);

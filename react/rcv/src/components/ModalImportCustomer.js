@@ -12,7 +12,7 @@ const ModalImportCustomer = (props) => {
         formState: { errors },
         handleSubmit
     } = useForm({
-        mode: "onBlur" // "onChange"
+        mode: "onChange"
     });
     const [uploadFile, setUploadFile] = useState();
     let history = useHistory();

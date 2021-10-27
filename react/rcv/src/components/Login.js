@@ -11,7 +11,7 @@ const Login = () => {
         formState: { errors },
         handleSubmit
     } = useForm({
-        mode: "onBlur" // "onChange"
+        mode: "onChange" // "onChange"
     });
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
