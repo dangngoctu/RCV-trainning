@@ -7,7 +7,7 @@ import ModalCustomer from './ModalCustomer';
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-
+import { useHistory } from "react-router-dom";
 
 const Customer = () => {
 
@@ -18,6 +18,7 @@ const Customer = () => {
     const [is_active, setIsActive] = useState('');
     const [action, setAction] = useState('create');
     const [id, setId] = useState('');
+    let history = useHistory();
     const columns = [
         {
             name: '#',
@@ -81,11 +82,16 @@ const Customer = () => {
                     })
                 }
             }).catch(error => {
-                Swal.fire({
-                    title: 'Lỗi!',
-                    text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                    icon: 'error',
-                })
+                if(error.response.status === 401 || error.response.status === 400){
+                    removeToken('token');
+                    history.push('/');
+                } else {
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                        icon: 'error',
+                    })
+                }
             });
     }
 
@@ -127,8 +133,17 @@ const Customer = () => {
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
-        }).catch((err) => {
-            return Promise.reject({ Error: 'Something Went Wrong', err });
+        }).catch((error) => {
+            if(error.response.status === 401 || error.response.status === 400){
+                removeToken('token');
+                history.push('/');
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                    icon: 'error',
+                })
+            }
         })
     }
 
@@ -168,11 +183,16 @@ const Customer = () => {
                 })
             }
         }).catch(error => {
-            Swal.fire({
-                title: 'Lỗi!',
-                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                icon: 'error',
-            })
+            if(error.response.status === 401 || error.response.status === 400){
+                removeToken('token');
+                history.push('/');
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                    icon: 'error',
+                })
+            }
         });
         window.$('#modalCustomer').modal('show');
     }

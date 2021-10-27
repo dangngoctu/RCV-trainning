@@ -6,6 +6,7 @@ import ModalUser from './ModalUser';
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useHistory } from "react-router-dom";
 
 const User = () => {
 
@@ -16,6 +17,7 @@ const User = () => {
     const [is_active, setIsActive] = useState('');
     const [group_role, setGroupRole] = useState('');
     let [data, setData] = useState([]);
+    let history = useHistory();
 
     const columns = [
         {
@@ -80,11 +82,16 @@ const User = () => {
                 })
             }
         }).catch(error => {
-            Swal.fire({
-                title: 'Lỗi!',
-                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                icon: 'error',
-            })
+            if(error.response.status === 401 || error.response.status === 400){
+                removeToken('token');
+                history.push('/');
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                    icon: 'error',
+                })
+            }
         });
     }
 
@@ -131,11 +138,16 @@ const User = () => {
                         })
                     }
                 }).catch(error => {
-                    Swal.fire({
-                        title: 'Lỗi!',
-                        text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                        icon: 'error',
-                    })
+                    if(error.response.status === 401 || error.response.status === 400){
+                        removeToken('token');
+                        history.push('/');
+                    } else {
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                            icon: 'error',
+                        })
+                    }
                 });
             }
         })
@@ -186,11 +198,16 @@ const User = () => {
                         })
                     }
                 }).catch(error => {
-                    Swal.fire({
-                        title: 'Lỗi!',
-                        text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                        icon: 'error',
-                    })
+                    if(error.response.status === 401 || error.response.status === 400){
+                        removeToken('token');
+                        history.push('/');
+                    } else {
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                            icon: 'error',
+                        })
+                    }
                 });
             }
         })
@@ -228,11 +245,16 @@ const User = () => {
                 })
             }
         }).catch(error => {
-            Swal.fire({
-                title: 'Lỗi!',
-                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                icon: 'error',
-            })
+            if(error.response.status === 401 || error.response.status === 400){
+                removeToken('token');
+                history.push('/');
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                    icon: 'error',
+                })
+            }
         });
         window.$('#modalUser').modal('show');
     }

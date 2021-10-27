@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useHistory } from "react-router-dom";
 
 const ModalUser = (props) => {
+
+    let history = useHistory();
 
     const SubmitUser = () => {
         axios.post("http://training.uk/api/user/action", {
@@ -37,11 +40,16 @@ const ModalUser = (props) => {
                 })
             }
         }).catch(error => {
-            Swal.fire({
-                title: 'Lỗi!',
-                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                icon: 'error',
-            })
+            if(error.response.status === 401 || error.response.status === 400){
+                removeToken('token');
+                history.push('/');
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                    icon: 'error',
+                })
+            }
         });
     }
 

@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useHistory } from "react-router-dom";
 
 const ModalImportCustomer = (props) => {
 
     const [uploadFile, setUploadFile] = useState();
+    let history = useHistory();
     const ImportCustomer = () => {
         const dataArray = new FormData();
         dataArray.append("import_file", uploadFile);
@@ -31,11 +33,16 @@ const ModalImportCustomer = (props) => {
                 })
             }
         }).catch(error => {
-            Swal.fire({
-                title: 'Lỗi!',
-                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                icon: 'error',
-            })
+            if(error.response.status === 401 || error.response.status === 400){
+                removeToken('token');
+                history.push('/');
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                    icon: 'error',
+                })
+            }
         });
     }
     return (

@@ -6,6 +6,7 @@ import ModalProduct from './ModalProduct';
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useHistory } from "react-router-dom";
 
 const Product = () => {
 
@@ -16,6 +17,7 @@ const Product = () => {
     const [price_from, setPriceFrom] = useState('');
     const [price_to, setPriceTo] = useState('');
     let [data, setData] = useState([]);
+    let history = useHistory();
 
     const columns = [
         {
@@ -83,11 +85,16 @@ const Product = () => {
                 })
             }
         }).catch(error => {
-            Swal.fire({
-                title: 'Lỗi!',
-                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                icon: 'error',
-            })
+            if(error.response.status === 401 || error.response.status === 400){
+                removeToken('token');
+                history.push('/');
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                    icon: 'error',
+                })
+            }
         });
     }
 
@@ -134,11 +141,16 @@ const Product = () => {
                 })
             }
         }).catch(error => {
-            Swal.fire({
-                title: 'Lỗi!',
-                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                icon: 'error',
-            })
+            if(error.response.status === 401 || error.response.status === 400){
+                removeToken('token');
+                history.push('/');
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                    icon: 'error',
+                })
+            }
         });
         window.$('#modalProduct').modal('show');
     }
@@ -180,11 +192,16 @@ const Product = () => {
                         })
                     }
                 }).catch(error => {
-                    Swal.fire({
-                        title: 'Lỗi!',
-                        text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                        icon: 'error',
-                    })
+                    if(error.response.status === 401 || error.response.status === 400){
+                        removeToken('token');
+                        history.push('/');
+                    } else {
+                        Swal.fire({
+                            title: 'Lỗi!',
+                            text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                            icon: 'error',
+                        })
+                    }
                 });
             }
         })

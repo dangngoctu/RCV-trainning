@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import $ from 'jquery';
+import { useHistory } from "react-router-dom";
 
 const ModalProduct = (props) => {
     const [product_name, setName] = useState('');
@@ -10,6 +10,7 @@ const ModalProduct = (props) => {
     const [product_price, setPrice] = useState('');
     const [description, setDescription] = useState('');
     const [uploadFile, setUploadFile] = useState();
+    let history = useHistory();
     
     const SubmitProduct = () => {
         const dataArray = new FormData();
@@ -43,11 +44,16 @@ const ModalProduct = (props) => {
                 })
             }
         }).catch(error => {
-            Swal.fire({
-                title: 'Lỗi!',
-                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                icon: 'error',
-            })
+            if(error.response.status === 401 || error.response.status === 400){
+                removeToken('token');
+                history.push('/');
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                    icon: 'error',
+                })
+            }
         });
     }
 

@@ -33,7 +33,7 @@ const Navbar = () => {
                                     <span href="pages/gallery.html" className="nav-link">
                                         <i className="fas fa-user-tie"></i>
                                         <p>
-                                            Customer
+                                            Khách hàng
                                         </p>
                                     </span>
                                 </li>

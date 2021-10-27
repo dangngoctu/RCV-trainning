@@ -2,13 +2,16 @@ import React, { useState } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import axios from 'axios';
 import Swal from 'sweetalert2';
+import { useHistory } from "react-router-dom";
 
 const ModalCustomer = (props) => {
+
     const [customer_name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [tel_num, setTelNum] = useState('');
     const [address, setAddress] = useState('');
     const [is_active, setIsActive] = useState('');
+    let history = useHistory();
 
     const SubmitCustomer = () => {
         axios.post("http://training.uk/api/customer/action", {
@@ -41,11 +44,16 @@ const ModalCustomer = (props) => {
                 })
             }
         }).catch(error => {
-            Swal.fire({
-                title: 'Lỗi!',
-                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                icon: 'error',
-            })
+            if(error.response.status === 401 || error.response.status === 400){
+                removeToken('token');
+                history.push('/');
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                    icon: 'error',
+                })
+            }
         });
     }
 

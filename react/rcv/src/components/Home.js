@@ -13,19 +13,18 @@ const Home = () => {
                     <div className="container-fluid">
                         <div className="row mb-2">
                             <div className="col-sm-6">
-                                <h1 className="m-0">Dashboard</h1>
+                                <h1 className="m-0">RiverCrane Training</h1>
                             </div>{/* /.col */}
                             <div className="col-sm-6">
                                 <ol className="breadcrumb float-sm-right">
                                     <li className="breadcrumb-item"><a href="#">Home</a></li>
-                                    <li className="breadcrumb-item active">Dashboard v1</li>
+                                    <li className="breadcrumb-item active">RiverCrane Training</li>
                                 </ol>
                             </div>{/* /.col */}
                         </div>{/* /.row */}
                     </div>{/* /.container-fluid */}
                 </div>
                 {/* /.content-header */}
-                <section className="content">abc</section>
             </div>
 
         </div>
