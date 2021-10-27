@@ -7,7 +7,6 @@ import ModalCustomer from './ModalCustomer';
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { timers } from 'jquery';
 
 
 const Customer = () => {
@@ -54,7 +53,6 @@ const Customer = () => {
         selectAllRowsItem: true,
         selectAllRowsItemText: 'Tất cả',
     };
-    const FileDownload = require('js-file-download');
 
     useEffect(() => {
         CustomerData();
@@ -159,7 +157,7 @@ const Customer = () => {
                 window.$('#tel_num').val(response.data.data.tel_num);
                 window.$('#address').val(response.data.data.address);
                 window.$('#email').val(response.data.data.email);
-                if(response.data.data.is_active == 1){
+                if(response.data.data.is_active === 1){
                     window.$('#is_active').prop('checked', true);
                 }
             } else {

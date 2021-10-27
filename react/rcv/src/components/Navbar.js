@@ -38,7 +38,7 @@ const Navbar = () => {
                                     </span>
                                 </li>
                             </Link>
-                            <Link to="/customer">
+                            <Link to="/user">
                                 <li className="nav-item">
                                     <span href="pages/gallery.html" className="nav-link">
                                         <i className="fas fa-user"></i>

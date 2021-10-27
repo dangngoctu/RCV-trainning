@@ -57,6 +57,7 @@ class MstUser extends Authenticatable implements JWTSubject
 		'email',
 		'verify_email',
 		'password',
+		'group_role',
 		'is_active',
 		'is_delete',
 		'last_login_at',

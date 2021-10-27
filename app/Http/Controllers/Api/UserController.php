@@ -35,7 +35,7 @@ class UserController extends Controller
                 $data = $data->where('group_role', $request->group_role);
             }
 
-            if(!empty($request->is_active) && $request->has('is_active')){
+            if($request->has('is_active') & $request->is_active != ""){
                 $data = $data->where('is_active', $request->is_active);
             }
 
@@ -132,7 +132,13 @@ class UserController extends Controller
                     }
 
                     if($request->has('is_active')){
-                        $data['is_active'] = $request->is_active;
+                        if($request->is_active === "on"){
+                            $data['is_active'] = 1;
+                        } else {
+                            $data['is_active'] = 0;
+                        }
+                    } else {
+                        $data['is_active'] = 0;
                     }
 
                     if($request->action === 'create') {
