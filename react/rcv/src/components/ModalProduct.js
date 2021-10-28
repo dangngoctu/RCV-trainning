@@ -93,7 +93,11 @@ const ModalProduct = (props) => {
                                                                 minLength: {
                                                                     value: 5,
                                                                     message: 'Tên phải lớn hơn 5 kí tự.'
-                                                                }
+                                                                },
+                                                                maxLength: {
+                                                                    value: 255,
+                                                                    message: 'Tên tối đa 255 kí tự!'
+                                                                },
                                                             })}
                                                         />
                                                         {errors.name && <p className="text-danger">{errors.name.message}</p>}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -62,6 +62,10 @@ const ModalUser = (props) => {
         });
     }
 
+    React.useEffect(() => {
+        props.childFunc.current = clearErrors
+    }, [])
+
     return (
         <div>
             <div className="modal fade" id="modalUser">
@@ -86,7 +90,11 @@ const ModalUser = (props) => {
                                                         minLength: {
                                                             value: 5,
                                                             message: 'Tên phải lớn hơn 5 kí tự.'
-                                                        }
+                                                        },
+                                                        maxLength: {
+                                                            value: 255,
+                                                            message: 'Tên tối đa 255 kí tự!'
+                                                        },
                                                     })}
                                                 />
                                                 {errors.name && <p className="text-danger">{errors.name.message}</p>}
@@ -99,6 +107,10 @@ const ModalUser = (props) => {
                                                         minLength: {
                                                             value: 5,
                                                             message: 'Email tối thiểu 5 kí tự!'
+                                                        },
+                                                        maxLength: {
+                                                            value: 255,
+                                                            message: 'Email tối đa 255 kí tự!'
                                                         },
                                                         pattern: {
                                                             value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,

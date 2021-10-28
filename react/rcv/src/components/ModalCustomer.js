@@ -90,7 +90,11 @@ const ModalCustomer = (props) => {
                                                             minLength: {
                                                                 value: 5,
                                                                 message: 'Tên phải lớn hơn 5 kí tự.'
-                                                            }
+                                                            },
+                                                            maxLength: {
+                                                                value: 255,
+                                                                message: 'Tên tối đa 255 kí tự!'
+                                                            },
                                                         })}
                                                     />
                                                     {errors.name && <p className="text-danger">{errors.name.message}</p>}
@@ -105,6 +109,10 @@ const ModalCustomer = (props) => {
                                                             minLength: {
                                                                 value: 5,
                                                                 message: 'Email tối thiểu 5 kí tự!'
+                                                            },
+                                                            maxLength: {
+                                                                value: 255,
+                                                                message: 'Email tối đa 255 kí tự!'
                                                             },
                                                             pattern: {
                                                                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,

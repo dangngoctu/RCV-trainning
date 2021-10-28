@@ -62,6 +62,10 @@ const Login = () => {
                                                 value: 5,
                                                 message: 'Email tối thiểu 5 kí tự!'
                                             },
+                                            maxLength: {
+                                                value: 255,
+                                                message: 'Email tối đa 255 kí tự!'
+                                            },
                                             pattern: {
                                                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
                                                 message: 'Email không hợp lệ',
@@ -80,7 +84,11 @@ const Login = () => {
                                 <div className="input-group mb-3">
                                     <input type="password" className="form-control" placeholder="Password"
                                         {...register("password", {
-                                            required: 'Mật khẩu không được trống!'
+                                            required: 'Mật khẩu không được trống!',
+                                            maxLength: {
+                                                value: 255,
+                                                message: 'Mật khẩu tối đa 255 kí tự!'
+                                            },
                                         })}
                                         value={password}
                                         onChange={e => setPassword(e.target.value)}
