@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form";
 
 const ModalImportCustomer = (props) => {
 
+    let history = useHistory();
+    const [uploadFile, setUploadFile] = useState();
     const {
         register,
         formState: { errors },
@@ -14,8 +16,6 @@ const ModalImportCustomer = (props) => {
     } = useForm({
         mode: "onChange"
     });
-    const [uploadFile, setUploadFile] = useState();
-    let history = useHistory();
     const ImportCustomer = () => {
         const dataArray = new FormData();
         dataArray.append("import_file", uploadFile);
@@ -33,6 +33,7 @@ const ModalImportCustomer = (props) => {
                     icon: 'success',
                 })
                 props.customerData();
+                window.$('#modalImportCustomer').modal('hide');
             } else {
                 Swal.fire({
                     title: 'Lỗi!',
@@ -70,11 +71,11 @@ const ModalImportCustomer = (props) => {
                                     <form id="FormModalImport">
                                         <div className="col-12 col-md-12">
                                             <input type="file" id="customerImportFile" onChange={(e) => setUploadFile(e.target.files[0])} accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-                                                {...register("file", {
+                                                {...register("file_import", {
                                                     required: 'File import không được trống!'
                                                 })}
                                             />
-                                            {errors.file && <p className="text-danger">{errors.file.message}</p>}
+                                            {errors.file_import && <p className="text-danger">{errors.file_import.message}</p>}
                                         </div>
                                     </form>
                                 </div>
