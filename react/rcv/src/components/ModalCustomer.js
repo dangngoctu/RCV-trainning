@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -10,7 +10,8 @@ const ModalCustomer = (props) => {
     const {
         register,
         formState: { errors },
-        handleSubmit
+        handleSubmit,
+        clearErrors
     } = useForm({
         mode: "onChange" // "onChange"
     });
@@ -21,6 +22,9 @@ const ModalCustomer = (props) => {
     const [is_active, setIsActive] = useState('');
     let history = useHistory();
 
+    useEffect(() => {
+        props.childFuncModal.current = clearErrors
+    }, [])
     const SubmitCustomer = () => {
         axios.post("http://training.uk/api/customer/action", {
             action: props.action,
@@ -91,7 +95,7 @@ const ModalCustomer = (props) => {
                                                                 value: 5,
                                                                 message: 'Tên phải lớn hơn 5 kí tự.'
                                                             },
-                                                            maxLength: {
+                                                            max: {
                                                                 value: 255,
                                                                 message: 'Tên tối đa 255 kí tự!'
                                                             },
@@ -110,7 +114,7 @@ const ModalCustomer = (props) => {
                                                                 value: 5,
                                                                 message: 'Email tối thiểu 5 kí tự!'
                                                             },
-                                                            maxLength: {
+                                                            max: {
                                                                 value: 255,
                                                                 message: 'Email tối đa 255 kí tự!'
                                                             },

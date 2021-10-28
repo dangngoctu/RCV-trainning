@@ -62,7 +62,7 @@ const Login = () => {
                                                 value: 5,
                                                 message: 'Email tối thiểu 5 kí tự!'
                                             },
-                                            maxLength: {
+                                            max: {
                                                 value: 255,
                                                 message: 'Email tối đa 255 kí tự!'
                                             },
@@ -85,7 +85,7 @@ const Login = () => {
                                     <input type="password" className="form-control" placeholder="Password"
                                         {...register("password", {
                                             required: 'Mật khẩu không được trống!',
-                                            maxLength: {
+                                            max: {
                                                 value: 255,
                                                 message: 'Mật khẩu tối đa 255 kí tự!'
                                             },

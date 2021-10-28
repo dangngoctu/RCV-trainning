@@ -36,23 +36,26 @@ class LoginController extends Controller
             return $this->JsonExport(403, $validator->errors()->first());
         } else {
             try {
-                $data = [];
                 DB::beginTransaction();
+                $data = [];
                 $credentials = [
                     'email' => $request->email,
                     'password' => $request->password,
                     'is_active' => 1,
                     'is_delete' => 0
                 ];
+
+                if($request->has('remember_token') && !empty($request->remember_token)){
+                    $remember = true;
+                } else {
+                    $remember = false;
+                }
     
-                if (!$token = auth('api')->attempt($credentials)) {
+                if (!$token = auth('api')->attempt($credentials, $remember)) {
                     return $this->JsonExport(403, 'Invalid Email or Password');
                 }
 
                 $userData = auth('api')->user();
-                if($request->has('remember_token') && !empty($request->remember_token)){
-                    $data['remember_token'] = substr($token, 0, 99);
-                }
                 $data['last_login_at'] = Carbon::now();
                 $clientIP = $_SERVER['HTTP_CLIENT_IP'] 
                 ?? $_SERVER["HTTP_CF_CONNECTING_IP"] 
@@ -64,7 +67,7 @@ class LoginController extends Controller
                 ?? '0.0.0.0';
 
                 $data['last_login_ip'] = $clientIP;
-
+                $data['last_login_at'] = Carbon::now();
                 $updateToken = $userData->update($data);
                 if(!$updateToken){
                     return $this->JsonExport(403, 'Invalid Email or Password');

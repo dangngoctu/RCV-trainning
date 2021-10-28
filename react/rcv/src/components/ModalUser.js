@@ -62,7 +62,7 @@ const ModalUser = (props) => {
         });
     }
 
-    React.useEffect(() => {
+    useEffect(() => {
         props.childFunc.current = clearErrors
     }, [])
 
@@ -91,7 +91,7 @@ const ModalUser = (props) => {
                                                             value: 5,
                                                             message: 'Tên phải lớn hơn 5 kí tự.'
                                                         },
-                                                        maxLength: {
+                                                        max: {
                                                             value: 255,
                                                             message: 'Tên tối đa 255 kí tự!'
                                                         },
@@ -108,7 +108,7 @@ const ModalUser = (props) => {
                                                             value: 5,
                                                             message: 'Email tối thiểu 5 kí tự!'
                                                         },
-                                                        maxLength: {
+                                                        max: {
                                                             value: 255,
                                                             message: 'Email tối đa 255 kí tự!'
                                                         },
@@ -122,11 +122,35 @@ const ModalUser = (props) => {
                                             </div>
                                             <label htmlFor="inputPassword" className="col-sm-2 col-form-label mg-t-10">Mật khẩu</label>
                                             <div className="col-sm-10 mg-t-10">
-                                                <input type="password" className="form-control" id="password" placeholder="Mật khẩu"/>
+                                                <input type="password" className="form-control" id="password" placeholder="Mật khẩu"
+                                                    {...register("password", {
+                                                        minLength: {
+                                                            value: 5,
+                                                            message: 'Mật khẩu lớn hơn 5 kí tự.'
+                                                        },
+                                                        max: {
+                                                            value: 255,
+                                                            message: 'Mật khẩu tối đa 255 kí tự!'
+                                                        },
+                                                    })}
+                                                />
+                                                {errors.password && <p className="text-danger">{errors.password.message}</p>}
                                             </div>
                                             <label htmlFor="inputConfirmPassword" className="col-sm-2 col-form-label mg-t-10">Xác nhận</label>
                                             <div className="col-sm-10 mg-t-10">
-                                                <input type="password" className="form-control" id="re_password" placeholder=" Xác nhận mật khẩu"/>
+                                                <input type="password" className="form-control" id="re_password" placeholder=" Xác nhận mật khẩu"
+                                                    {...register("re_password", {
+                                                        minLength: {
+                                                            value: 5,
+                                                            message: 'Xác nhận mật khẩu lớn hơn 5 kí tự.'
+                                                        },
+                                                        max: {
+                                                            value: 255,
+                                                            message: 'Xác nhận mật khẩu tối đa 255 kí tự!'
+                                                        }
+                                                    })}
+                                                />
+                                                {errors.re_password && <p className="text-danger">{errors.re_password.message}</p>}
                                             </div>
                                             <label htmlFor="inputIsSales" className="col-sm-2 col-form-label mg-t-10">Nhóm</label>
                                             <div className="col-sm-10">
@@ -134,7 +158,7 @@ const ModalUser = (props) => {
                                                     <option label="Chọn nhóm"></option>
                                                     <option value="1">Admin</option>
                                                     <option value="2">Editer</option>
-                                                    <option value="2">Reviewer</option>
+                                                    <option value="3">Reviewer</option>
                                                 </select>
                                             </div>
                                             <label htmlFor="inputIsActive" className="col-sm-2 col-form-label mg-t-10">Trạng Thái</label>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import Header from './Header';
 import Navbar from './Navbar';
@@ -18,6 +18,7 @@ const Customer = () => {
     const [is_active, setIsActive] = useState('');
     const [action, setAction] = useState('create');
     const [id, setId] = useState('');
+    const childFuncModal = useRef(null);
     let history = useHistory();
     const columns = [
         {
@@ -102,6 +103,7 @@ const Customer = () => {
 
     const ClearModal = () => {
         window.$('#FormModalCustomer')[0].reset();
+        childFuncModal.current();
     }
 
     const ShowModalImport = () => {
@@ -201,8 +203,8 @@ const Customer = () => {
         <div>
             <Header />
             <Navbar />
-            <ModalImportCustomer customerData={CustomerData} />
-            <ModalCustomer customerData={CustomerData} action={action} id={id}/>
+            <ModalImportCustomer customerData={CustomerData}/>
+            <ModalCustomer customerData={CustomerData} action={action} id={id} childFuncModal={childFuncModal}/>
             <div className="content-wrapper">
                 <div className='pd-15'>
                     <div className="filter mg-b-10">

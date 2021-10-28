@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import Header from './Header';
 import Navbar from './Navbar';
@@ -16,6 +16,7 @@ const User = () => {
     const [email, setEmail] = useState('');
     const [is_active, setIsActive] = useState('');
     const [group_role, setGroupRole] = useState('');
+    const childFunc = useRef(null);
     let [data, setData] = useState([]);
     let history = useHistory();
 
@@ -215,6 +216,7 @@ const User = () => {
 
     let ClearModal = () => {
         window.$('#FormModal')[0].reset();
+        childFunc.current();
     }
 
     const onUpdate = (customer_id) => {
@@ -270,7 +272,7 @@ const User = () => {
         <div>
             <Header />
             <Navbar />
-            <ModalUser action={action} id={id} userData={UserData}/>
+            <ModalUser action={action} id={id} userData={UserData} childFunc={childFunc}/>
             <div className="content-wrapper">
                 <div className='pd-15'>
                     <div className="filter mg-b-10">
@@ -300,7 +302,7 @@ const User = () => {
                                             <option label="Chọn nhóm"></option>
                                             <option value="1">Admin</option>
                                             <option value="2">Editer</option>
-                                            <option value="2">Reviewer</option>
+                                            <option value="3">Reviewer</option>
                                         </select>
                                     </div>
                                 </div>

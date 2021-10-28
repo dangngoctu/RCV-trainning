@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import Header from './Header';
 import Navbar from './Navbar';
@@ -16,6 +16,7 @@ const Product = () => {
     const [is_sales, setIsSales] = useState('');
     const [price_from, setPriceFrom] = useState('');
     const [price_to, setPriceTo] = useState('');
+    const childFunc = useRef(null);
     let [data, setData] = useState([]);
     let history = useHistory();
 
@@ -107,6 +108,7 @@ const Product = () => {
         window.$('#FormModal')[0].reset();
         window.$('#product_image_file').val('');
         window.$('#product_image').prop('src', '');
+        childFunc.current();
     }
 
     let onUpdate = (product_id) => {
@@ -218,7 +220,7 @@ const Product = () => {
         <div>
             <Header />
             <Navbar />
-            <ModalProduct action={action} id={id} productData={ProductData} />
+            <ModalProduct action={action} id={id} productData={ProductData} childFunc={childFunc}/>
             <div className="content-wrapper">
                 <div className='pd-15'>
                     <div className="filter mg-b-10">

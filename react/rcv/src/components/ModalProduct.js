@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import axios from 'axios';
 import Swal from 'sweetalert2';
@@ -10,7 +10,8 @@ const ModalProduct = (props) => {
     const {
         register,
         formState: { errors },
-        handleSubmit
+        handleSubmit,
+        clearErrors
     } = useForm({
         mode: "onChange" // "onChange"
     });
@@ -20,6 +21,10 @@ const ModalProduct = (props) => {
     const [description, setDescription] = useState('');
     const [uploadFile, setUploadFile] = useState();
     let history = useHistory();
+
+    useEffect(() => {
+        props.childFunc.current = clearErrors
+    }, [])
 
     const SubmitProduct = () => {
         const dataArray = new FormData();
@@ -94,7 +99,7 @@ const ModalProduct = (props) => {
                                                                     value: 5,
                                                                     message: 'Tên phải lớn hơn 5 kí tự.'
                                                                 },
-                                                                maxLength: {
+                                                                max: {
                                                                     value: 255,
                                                                     message: 'Tên tối đa 255 kí tự!'
                                                                 },

@@ -28,14 +28,14 @@ class UserController extends Controller
             }
 
             if(!empty($request->email) && $request->has('email')){
-                $data = $data->where('email', 'LIKE', '%'.$request->name.'%');
+                $data = $data->where('email', 'LIKE', '%'.$request->email.'%');
             }
 
             if(!empty($request->group_role) && $request->has('group_role')){
                 $data = $data->where('group_role', $request->group_role);
             }
 
-            if($request->has('is_active') & $request->is_active != ""){
+            if($request->has('is_active') && $request->is_active != ""){
                 $data = $data->where('is_active', $request->is_active);
             }
 

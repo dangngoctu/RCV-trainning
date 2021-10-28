@@ -38,7 +38,7 @@ class CustomerController extends Controller
                 $data = $data->where('address', 'LIKE', '%'.$request->address.'%');
             }
 
-            if(!empty($request->is_active) && $request->has('is_active')){
+            if($request->has('is_active') && $request->is_active != ""){
                 $data = $data->where('is_active', $request->is_active);
             }
 
