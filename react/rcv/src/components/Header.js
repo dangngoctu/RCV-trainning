@@ -8,37 +8,47 @@ import { useHistory } from "react-router-dom";
 const Header = () => {
 	let history = useHistory();
 	const HandleLogout = () => {
-		axios.post("http://training.uk/api/logout", { 
-			
-        },
-		{
-			headers: {
-			'Content-Type': 'application/json',
-			'Authorization': 'Bearer ' + getToken()
-			}
-		}).then(response => {
-            if(response.data.code === 200){
-                removeToken();
-				history.push("/");
-            } else {
-                Swal.fire({
-                    title: 'Lỗi!',
-                    text: response.data.msg,
-                    icon: 'warning',
-                })
-            }
-        }).catch(error => {
-            Swal.fire({
-                title: 'Lỗi!',
-                text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
-                icon: 'error',
-            })
-        });
+		axios.post("http://training.uk/api/logout", {
+
+		},
+			{
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': 'Bearer ' + getToken()
+				}
+			}).then(response => {
+				if (response.data.code === 200) {
+					removeToken();
+					history.push("/");
+				} else {
+					Swal.fire({
+						title: 'Lỗi!',
+						text: response.data.msg,
+						icon: 'warning',
+					})
+				}
+			}).catch(error => {
+				if(error.response.status === 401 || error.response.status === 400){
+					removeToken('token');
+					history.push('/');
+				} else {
+					Swal.fire({
+						title: 'Lỗi!',
+						text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+						icon: 'error',
+					})
+				}
+			});
 	}
 
 	return (
 		<div>
 			<nav className="main-header navbar navbar-expand navbar-white navbar-light">
+				<ul class="navbar-nav">
+					<li class="nav-item">
+						<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+					</li>
+				</ul>
 				<ul className="navbar-nav ml-auto">
 					<li className="nav-item">
 						<a href="#" onClick={HandleLogout} className="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
