@@ -265,13 +265,13 @@ const Product = () => {
 
                         <div className="row">
                             <div className="col-12 col-md-3">
-                                <input type="button" className="btn btn-block btn-success" value="Thêm mới" onClick={CreateModal} />
+                                <input type="button" className="btn btn-block btn-success mg-b-5" value="Thêm mới" onClick={CreateModal} />
                             </div>
                             <div className="col-12 col-md-3">
-                                <input type="button" onClick={ProductData} className="btn btn-block btn-primary" value="Tìm kiếm" />
+                                <input type="button" onClick={ProductData} className="mg-b-5 btn btn-block btn-primary" value="Tìm kiếm" />
                             </div>
                             <div className="col-12 col-md-3">
-                                <input type="button" onClick={ClearSearch} className="btn btn-block btn-secondary" value="Xoá tìm" />
+                                <input type="button" onClick={ClearSearch} className="mg-b-5 btn btn-block btn-secondary" value="Xoá tìm" />
                             </div>
                         </div>
                     </div>

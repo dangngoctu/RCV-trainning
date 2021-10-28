@@ -248,19 +248,19 @@ const Customer = () => {
 
                         <div className="row">
                             <div className="col-12 col-md-2">
-                                <input type="button" className="btn btn-block btn-success" onClick={ShowModalCustomer} value="Thêm mới"/>
+                                <input type="button" className="btn btn-block btn-success mg-b-5" onClick={ShowModalCustomer} value="Thêm mới"/>
                             </div>
                             <div className="col-12 col-md-2">
-                                <input type="button" className="btn btn-block btn-success" onClick={ShowModalImport} value="ImportCSV"/>
+                                <input type="button" className="btn btn-block btn-success mg-b-5" onClick={ShowModalImport} value="ImportCSV"/>
                             </div>
                             <div className="col-12 col-md-2">
-                                <input type="button" className="btn btn-block btn-success" onClick={ExportCustomer}value="ExportCSV"/>
+                                <input type="button" className="btn btn-block btn-success mg-b-5" onClick={ExportCustomer}value="ExportCSV"/>
                             </div>
                             <div className="col-12 col-md-2">
-                                <input type="button" className="btn btn-block btn-primary" onClick={CustomerData} value="Tìm kiếm" />
+                                <input type="button" className="btn btn-block btn-primary mg-b-5" onClick={CustomerData} value="Tìm kiếm" />
                             </div>
                             <div className="col-12 col-md-2">
-                                <input type="button" className="btn btn-block btn-secondary" onClick={ClearSearch} value="Xoá tìm" />
+                                <input type="button" className="btn btn-block btn-secondary mg-b-5" onClick={ClearSearch} value="Xoá tìm" />
                             </div>
                         </div>
                     </div>

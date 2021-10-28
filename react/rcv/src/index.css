@@ -31,3 +31,13 @@ code {
 .w-100{
   width: 100%;
 }
+
+.modal-xxl{
+  max-width: 1400px;
+}
+
+@media only screen and (max-width: 767px) {
+  .mg-b-5{
+    margin-bottom: 5px;
+  }
+}

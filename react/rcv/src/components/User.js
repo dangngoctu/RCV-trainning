@@ -319,13 +319,13 @@ const User = () => {
                         </form>
                         <div className="row">
                             <div className="col-12 col-md-3">
-                                <input type="button" onClick={CreateModal} className="btn btn-block btn-success" value="Thêm mới"/>
+                                <input type="button" onClick={CreateModal} className="mg-b-5 btn btn-block btn-success" value="Thêm mới"/>
                             </div>
                             <div className="col-12 col-md-3">
-                                <input type="button" onClick={UserData} className="btn btn-block btn-primary" value="Tìm kiếm" />
+                                <input type="button" onClick={UserData} className="mg-b-5 btn btn-block btn-primary" value="Tìm kiếm" />
                             </div>
                             <div className="col-12 col-md-3">
-                                <input type="button" onClick={ClearSearch} className="btn btn-block btn-secondary" value="Xoá tìm" />
+                                <input type="button" onClick={ClearSearch} className="mg-b-5 btn btn-block btn-secondary" value="Xoá tìm" />
                             </div>
                         </div>
                     </div>

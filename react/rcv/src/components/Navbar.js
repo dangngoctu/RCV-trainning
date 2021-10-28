@@ -48,6 +48,16 @@ const Navbar = () => {
                                     </span>
                                 </li>
                             </Link>
+                            <Link to="/order">
+                                <li className="nav-item">
+                                    <span href="pages/gallery.html" className="nav-link">
+                                        <i className="fas fa-boxes"></i>
+                                        <p>
+                                            Đơn hàng
+                                        </p>
+                                    </span>
+                                </li>
+                            </Link>
                         </ul>
                     </nav>
                     {/* /.sidebar-menu */}
