@@ -131,7 +131,14 @@ const ModalCustomer = (props) => {
                                                 <div className="col-sm-9">
                                                     <input type="text" className="form-control mg-t-10" id="tel_num" placeholder="Số điện thoại" required
                                                         onChange={e => setTelNum(e.target.value)}
+                                                        {...register("phone", {
+                                                            pattern: {
+                                                                value: /^[0-9]{9,20}$/i,
+                                                                message: 'Phone không hợp lệ',
+                                                            }
+                                                        })}
                                                     />
+                                                    {errors.phone && <p className="text-danger">{errors.phone.message}</p>}
                                                 </div>
 
                                                 <label htmlFor="inputAddress" className="col-sm-3 col-form-label mg-t-10">Địa chỉ</label>
