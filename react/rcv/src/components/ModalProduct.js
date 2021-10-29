@@ -99,7 +99,7 @@ const ModalProduct = (props) => {
                                                                     value: 5,
                                                                     message: 'Tên phải lớn hơn 5 kí tự.'
                                                                 },
-                                                                max: {
+                                                                maxLength: {
                                                                     value: 255,
                                                                     message: 'Tên tối đa 255 kí tự!'
                                                                 },

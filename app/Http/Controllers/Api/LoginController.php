@@ -45,13 +45,7 @@ class LoginController extends Controller
                     'is_delete' => 0
                 ];
 
-                if($request->has('remember_token') && !empty($request->remember_token)){
-                    $remember = true;
-                } else {
-                    $remember = false;
-                }
-    
-                if (!$token = auth('api')->attempt($credentials, $remember)) {
+                if (!$token = auth('api')->attempt($credentials)) {
                     return $this->JsonExport(403, 'Invalid Email or Password');
                 }
 
@@ -68,6 +62,13 @@ class LoginController extends Controller
 
                 $data['last_login_ip'] = $clientIP;
                 $data['last_login_at'] = Carbon::now();
+
+                if($request->has('remember_token') && !empty($request->remember_token)){
+                    $data['remember_token'] = $token;
+                } else {
+                    $data['remember_token'] = $token;
+                }
+
                 $updateToken = $userData->update($data);
                 if(!$updateToken){
                     return $this->JsonExport(403, 'Invalid Email or Password');

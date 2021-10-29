@@ -91,7 +91,7 @@ const ModalUser = (props) => {
                                                             value: 5,
                                                             message: 'Tên phải lớn hơn 5 kí tự.'
                                                         },
-                                                        max: {
+                                                        maxLength: {
                                                             value: 255,
                                                             message: 'Tên tối đa 255 kí tự!'
                                                         },
@@ -108,7 +108,7 @@ const ModalUser = (props) => {
                                                             value: 5,
                                                             message: 'Email tối thiểu 5 kí tự!'
                                                         },
-                                                        max: {
+                                                        maxLength: {
                                                             value: 255,
                                                             message: 'Email tối đa 255 kí tự!'
                                                         },
@@ -128,7 +128,7 @@ const ModalUser = (props) => {
                                                             value: 5,
                                                             message: 'Mật khẩu lớn hơn 5 kí tự.'
                                                         },
-                                                        max: {
+                                                        maxLength: {
                                                             value: 255,
                                                             message: 'Mật khẩu tối đa 255 kí tự!'
                                                         },
@@ -144,7 +144,7 @@ const ModalUser = (props) => {
                                                             value: 5,
                                                             message: 'Xác nhận mật khẩu lớn hơn 5 kí tự.'
                                                         },
-                                                        max: {
+                                                        maxLength: {
                                                             value: 255,
                                                             message: 'Xác nhận mật khẩu tối đa 255 kí tự!'
                                                         }

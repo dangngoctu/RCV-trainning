@@ -28,7 +28,7 @@ class CreateUsersTable extends Migration
             $table->string('group_role', 50)->nullable();
             $table->index(['email']);
             $table->timestamps();
-            $table->rememberToken();
+            $table->longtext('remember_token');
         });
     }
 

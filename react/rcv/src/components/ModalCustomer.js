@@ -95,7 +95,7 @@ const ModalCustomer = (props) => {
                                                                 value: 5,
                                                                 message: 'Tên phải lớn hơn 5 kí tự.'
                                                             },
-                                                            max: {
+                                                            maxLength: {
                                                                 value: 255,
                                                                 message: 'Tên tối đa 255 kí tự!'
                                                             },
@@ -114,7 +114,7 @@ const ModalCustomer = (props) => {
                                                                 value: 5,
                                                                 message: 'Email tối thiểu 5 kí tự!'
                                                             },
-                                                            max: {
+                                                            maxLength: {
                                                                 value: 255,
                                                                 message: 'Email tối đa 255 kí tự!'
                                                             },
