@@ -82,14 +82,12 @@ class UserController extends Controller
             $rules['name'] = 'required|max:255';
             $rules['group_role'] = 'required';
             if($request->action === "update"){
-                $rules['email'] = 'required|max:255|email|unique:mst_users,email';
-
+                $rules['email'] = 'required|max:255|email';
                 if($request->has('password') && !empty($request->password)){
                     $rules['password'] = 'same:re_password';
                 }
-            }
-            else {
-                $rules['email'] = 'required|max:255|email';
+            } else {
+                $rules['email'] = 'required|max:255|email|unique:mst_users,email';
                 $rules['password'] = 'required|same:re_password';
             }
         }
@@ -142,14 +140,14 @@ class UserController extends Controller
                     }
 
                     if($request->action === 'create') {
-                        $checkUser = Models\MstUser::where('email', $request->email)->where('id', '!=', $request->id)->first();
+                        $checkUser = Models\MstUser::where('email', $request->email)->first();
                         if($checkUser){
                             return $this->JsonExport(403, 'Email không được trùng.');
                         }
                         $data['email'] = $request->email;
                         $action = Models\MstUser::create($data);
                     } else {
-                        $checkUser = Models\MstUser::where('email', $request->email)->first();
+                        $checkUser = Models\MstUser::where('email', $request->email)->where('id', '!=', $request->id)->first();
                         if($checkUser){
                             return $this->JsonExport(403, 'Email không được trùng.');
                         }

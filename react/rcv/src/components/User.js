@@ -214,13 +214,18 @@ const User = () => {
         })
     }
 
-    let ClearModal = () => {
+    let ClearModal = (action) => {
         window.$('#FormModal')[0].reset();
+        if(action === "create") {
+            window.$('#email').prop('readonly', false);
+        } else {
+            window.$('#email').prop('readonly', true);
+        }
         childFunc.current();
     }
 
     const onUpdate = (customer_id) => {
-        ClearModal();
+        ClearModal('update');
         setAction('update');
         setId(customer_id);
         window.$('#modalUser .modal-title').html('Cập nhật nhân viên');
