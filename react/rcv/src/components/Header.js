@@ -1,7 +1,7 @@
 import React from 'react';
 import axios from 'axios';
 import Swal from 'sweetalert2';
-import { removeToken, getToken } from '../utils/Common';
+import { removeToken, getToken, getName } from '../utils/Common';
 import { useHistory } from "react-router-dom";
 
 
@@ -44,12 +44,13 @@ const Header = () => {
 	return (
 		<div>
 			<nav className="main-header navbar navbar-expand navbar-white navbar-light">
-				<ul class="navbar-nav">
-					<li class="nav-item">
-						<a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+				<ul className="navbar-nav">
+					<li className="nav-item">
+						<a className="nav-link" data-widget="pushmenu" href="#" role="button"><i className="fas fa-bars"></i></a>
 					</li>
 				</ul>
 				<ul className="navbar-nav ml-auto">
+					<span className="nav-item pd-t-5">{getName()}</span>
 					<li className="nav-item">
 						<a href="#" onClick={HandleLogout} className="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
 							<i className="fas fa-door-closed"></i>

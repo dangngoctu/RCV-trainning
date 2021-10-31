@@ -13,19 +13,23 @@ code {
 }
 
 .pd-15{
-  padding: 15px;
+  padding: 15px !important;
 }
 
 .mg-b-10{
-  margin-bottom: 10px;
+  margin-bottom: 10px !important;
 }
 
 .mg-t-10{
-  margin-top: 10px;
+  margin-top: 10px !important;
+}
+
+.pd-t-5{
+  padding-top: 5px !important;
 }
 
 .mg-l-5{
-  margin-left: 5px;
+  margin-left: 5px !important;
 }
 
 .w-100{
@@ -36,8 +40,12 @@ code {
   max-width: 1400px;
 }
 
+.border-nav{
+  border-bottom: 1px solid #4b545c;
+}
+
 @media only screen and (max-width: 767px) {
   .mg-b-5{
-    margin-bottom: 5px;
+    margin-bottom: 5px !important;
   }
 }

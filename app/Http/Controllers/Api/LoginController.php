@@ -73,8 +73,12 @@ class LoginController extends Controller
                 if(!$updateToken){
                     return $this->JsonExport(403, 'Invalid Email or Password');
                 }
+                $result = [
+                    'token' => $token,
+                    'name' => $userData->name
+                ];
                 DB::commit();
-                return $this->JsonExport(200, 'Thành công', $token);
+                return $this->JsonExport(200, 'Thành công', $result);
             } catch (\Exception $e){
                 DB::rollback();
                 Log::error($e);

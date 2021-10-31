@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import Header from './Header';
 import Navbar from './Navbar';
-import ModalProduct from './ModalProduct';
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useHistory } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 const Product = () => {
 
@@ -16,8 +16,29 @@ const Product = () => {
     const [is_sales, setIsSales] = useState('');
     const [price_from, setPriceFrom] = useState('');
     const [price_to, setPriceTo] = useState('');
-    const childFunc = useRef(null);
+    const [product_name, setProductName] = useState('');
+    const [product_is_sales, setProductIsSales] = useState(1);
+    const [product_price, setProductPrice] = useState('');
+    const [description, setProductDescription] = useState('');
+    const [uploadFile, setUploadFile] = useState();
+    const {
+        register,
+        formState: { errors },
+        handleSubmit,
+        clearErrors,
+        reset
+    } = useForm({
+        mode: "onChange" // "onChange"
+    });
+
     let [data, setData] = useState([]);
+    let [dataSearch, setDataSearch] = useState({
+        name: name,
+        is_sales: is_sales,
+        price_from: price_from,
+        price_to: price_to
+    });
+
     let history = useHistory();
 
     const columns = [
@@ -61,14 +82,14 @@ const Product = () => {
 
     useEffect(() => {
         ProductData();
-    }, []);
+    }, [dataSearch]);
 
     const ProductData = () => {
         axios.post("http://training.uk/api/product", {
-            name: window.$('#FormSearch #InputName').val(),
-            is_sales: window.$('#FormSearch #InputIsSale').val(),
-            price_from: window.$('#FormSearch #InputPriceFrom').val(),
-            price_to: window.$('#FormSearch #InputPriceTo').val()
+            name: name,
+            is_sales: is_sales,
+            price_from: price_from,
+            price_to: price_to
         },
         {
             headers: {
@@ -99,16 +120,76 @@ const Product = () => {
         });
     }
 
+    const SubmitProduct = () => {
+        const dataArray = new FormData();
+        dataArray.append("action", action);
+        dataArray.append("id", id);
+        dataArray.append("product_name", product_name);
+        dataArray.append("is_sales", product_is_sales);
+        dataArray.append("product_price", product_price);
+        dataArray.append("description", description);
+        dataArray.append("file", uploadFile);
+        axios.post("http://training.uk/api/product/action", dataArray,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                    'Authorization': 'Bearer ' + getToken()
+                }
+            }).then(response => {
+                if (response.data.code === 200) {
+                    Swal.fire({
+                        title: 'Thành công!',
+                        text: '',
+                        icon: 'success',
+                    })
+                    window.$('#modalProduct').modal('hide');
+                    ProductData()
+                } else {
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: response.data.msg,
+                        icon: 'warning',
+                    })
+                }
+            }).catch(error => {
+                if (error.response.status === 401 || error.response.status === 400) {
+                    removeToken('token');
+                    history.push('/');
+                } else {
+                    Swal.fire({
+                        title: 'Lỗi!',
+                        text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                        icon: 'error',
+                    })
+                }
+            });
+    }
+
     const ClearSearch = () => {
         window.$('#FormSearch')[0].reset();
-        ProductData();
+        setName('');
+        setIsSales('');
+        setPriceFrom('');
+        setPriceTo('');
+        setDataSearch({
+            name: name,
+            is_sales: is_sales,
+            price_from: price_from,
+            price_to: price_to
+        });
     }
 
     const ClearModal = () => {
         window.$('#FormModal')[0].reset();
         window.$('#product_image_file').val('');
         window.$('#product_image').prop('src', '');
-        childFunc.current();
+        setProductName('');
+        setProductIsSales('');
+        setProductPrice('');
+        setProductDescription('');
+        setUploadFile();
+        clearErrors();
+        reset();
     }
 
     let onUpdate = (product_id) => {
@@ -126,10 +207,10 @@ const Product = () => {
         }
         }).then(response => {
             if (response.data.code === 200) {
-                window.$('#product_name').val(response.data.data.product_name);
-                window.$('#product_price').val(response.data.data.product_price);
-                window.$('#description').val(response.data.data.description);
-                window.$('#is_sales').val(response.data.data.is_sales).trigger('change');
+                setProductName(response.data.data.product_name);
+                setProductIsSales(response.data.data.is_sales);
+                setProductPrice(response.data.data.product_price);
+                setProductDescription(response.data.data.description);
                 if(response.data.data.product_image){
                     window.$('#product_image').prop('src', 'http://training.uk/img/product/'+response.data.data.product_image);
                 } else {
@@ -220,7 +301,6 @@ const Product = () => {
         <div>
             <Header />
             <Navbar />
-            <ModalProduct action={action} id={id} productData={ProductData} childFunc={childFunc}/>
             <div className="content-wrapper">
                 <div className='pd-15'>
                     <div className="filter mg-b-10">
@@ -285,6 +365,105 @@ const Product = () => {
                             paginationComponentOptions={paginationComponentOptions}
                             responsive
                         />
+                    </div>
+                </div>
+
+            </div>
+
+            <div className="modal fade" id="modalProduct">
+                <div className="modal-dialog modal-xl">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h4 className="modal-title">Default Modal</h4>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <div className="row">
+                                <div className="col-12 col-md-8">
+                                    <form id="FormModal">
+                                        <div className="form-group row">
+                                            <div className="col-12">
+                                                <div className="row">
+                                                    <label htmlFor="inputName" className="col-sm-2 col-form-label">Tên sản phẩm</label>
+                                                    <div className="col-sm-10">
+                                                        <input type="text" className="form-control" id="product_name" placeholder="Tên sản phẩm" required value={product_name}
+                                                            {...register("name", {
+                                                                required: 'Tên không được trống!',
+                                                                minLength: {
+                                                                    value: 5,
+                                                                    message: 'Tên phải lớn hơn 5 kí tự.'
+                                                                },
+                                                                maxLength: {
+                                                                    value: 255,
+                                                                    message: 'Tên tối đa 255 kí tự!'
+                                                                },
+                                                            })}
+                                                            onChange={e => setProductName(e.target.value)}
+                                                        />
+                                                        {errors.name && <p className="text-danger">{errors.name.message}</p>}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div className="col-12">
+                                                <div className="row">
+                                                    <label htmlFor="inputPrice" className="col-sm-2 col-form-label mg-t-10">Giá bán</label>
+                                                    <div className="col-sm-10">
+                                                        <input type="number" step="1" className="form-control mg-t-10" id="product_price" placeholder="Giá sản phẩm" value={product_price} required
+                                                            {...register("price", {
+                                                                required: 'Giá không được trống!',
+                                                                min: {
+                                                                    value: 0,
+                                                                    message: 'Giá không được nhỏ hơn 0'
+                                                                },
+                                                                max: {
+                                                                    value: 999999,
+                                                                    message: 'Giá không được lớn hơn 999999'
+                                                                }
+                                                            })}
+                                                            onChange={e => setProductPrice(e.target.value)}
+                                                        />
+                                                         {errors.price && <p className="text-danger">{errors.price.message}</p>}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                            <label htmlFor="inputDescription" className="col-sm-2 col-form-label mg-t-10">Mô tả</label>
+                                            <div className="col-sm-10">
+                                                <textarea rows="4" className="form-control mg-t-10" id="description" placeholder="Mô tả sản phẩm" value={description}
+                                                    onChange={e => setProductDescription(e.target.value)}
+                                                />
+                                            </div>
+                                            <label htmlFor="inputIsSales" className="col-sm-2 col-form-label mg-t-10">Trạng thái</label>
+                                            <div className="col-sm-10">
+                                                <select className="form-control mg-t-10" id="is_sales" value={product_is_sales}
+                                                    onChange={e => setProductIsSales(e.target.value)}
+                                                >
+                                                    <option value="1">Đang bán</option>
+                                                    <option value="2">Đang hết hàng</option>
+                                                    <option value="0">Ngừng bán</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div className="col-12 col-md-4">
+                                    <div className="row">
+                                        <div className="col-12 col-md-12">
+                                            <input type="file" id="product_image_file" onChange={(e) => setUploadFile(e.target.files[0])} accept="image/jpg, image/jpeg, image/png" />
+                                        </div>
+                                        <div className="col-12 col-md-12  mg-t-10">
+                                            <img className="w-100" src='' id="product_image"></img>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className="modal-footer justify-content-between mg-t-10">
+                                <button type="button" className="btn btn-default" data-dismiss="modal" >Đóng</button>
+                                <button type="button" className="btn btn-primary" onClick={handleSubmit(SubmitProduct)}>Lưu</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

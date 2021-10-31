@@ -146,7 +146,8 @@ class ProductController extends Controller
                         $data['description'] = $request->description;
                     }
     
-                    if($request->has('file')){
+                    if($request->has('file') && !empty($request->file) && $request->file != 'undefined'){
+                        return $request->file;
                         $product_image = 'productImage_'.time().'.'.$request->file->getClientOriginalExtension();
                         $data['product_image'] = $product_image;
                     }
@@ -162,14 +163,14 @@ class ProductController extends Controller
                         $newId = str_pad($newId, 9, "0", STR_PAD_LEFT);
                         $data['product_id'] = $request->product_name[0].$newId;
                         $action = Models\MstProduct::create($data);
-                        if($request->has('file')){
+                        if($request->has('file') && !empty($request->file) && $request->file != 'undefined'){
                             $request->file->move($dir_file, $product_image);
                         }
                     } else {
                         $product = Models\MstProduct::where('product_id', $request->id)->first();
                         if($product){
-                            if($request->has('file')){
-                                if(!empty($product->product_image)){
+                            if($request->has('file') && !empty($request->file) && $request->file != 'undefined'){
+                                if(!empty($product->product_image) && !empty($request->file) && $request->file != 'undefined'){
                                     @unlink(public_path('/img/product/'. $product->product_image));
                                 }
                                 $request->file->move($dir_file, $product_image);

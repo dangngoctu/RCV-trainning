@@ -19,30 +19,30 @@ const Navbar = () => {
                     <nav className="mt-2">
                         <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
                             <Link to="/product">
-                                <li className="nav-item">
+                                <li className="nav-item border-nav">
                                     <span href="pages/gallery.html" className="nav-link">
                                         <i className="fas fa-box"></i>
-                                        <p>
+                                        <p className="mg-l-5">
                                             Sản phẩm
                                         </p>
                                     </span>
                                 </li>
                             </Link>
                             <Link to="/customer">
-                                <li className="nav-item">
+                                <li className="nav-item border-nav">
                                     <span href="pages/gallery.html" className="nav-link">
                                         <i className="fas fa-user-tie"></i>
-                                        <p>
+                                        <p className="mg-l-5">
                                             Khách hàng
                                         </p>
                                     </span>
                                 </li>
                             </Link>
                             <Link to="/user">
-                                <li className="nav-item">
+                                <li className="nav-item border-nav">
                                     <span href="pages/gallery.html" className="nav-link">
                                         <i className="fas fa-user"></i>
-                                        <p>
+                                        <p className="mg-l-5">
                                             User
                                         </p>
                                     </span>
@@ -52,7 +52,7 @@ const Navbar = () => {
                                 <li className="nav-item">
                                     <span href="pages/gallery.html" className="nav-link">
                                         <i className="fas fa-boxes"></i>
-                                        <p>
+                                        <p className="mg-l-5">
                                             Đơn hàng
                                         </p>
                                     </span>
