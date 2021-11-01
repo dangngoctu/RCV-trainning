@@ -15,7 +15,8 @@ const User = () => {
         formState: { errors },
         handleSubmit,
         clearErrors,
-        reset
+        reset,
+        setValue
     } = useForm({
         mode: "onChange"
     });
@@ -342,6 +343,8 @@ const User = () => {
         }
         }).then(response => {
             if (response.data.code === 200) {
+                setValue('name', response.data.data.name);
+                setValue('email', response.data.data.email);
                 setUserName(response.data.data.name);
                 setUserEmail(response.data.data.email);
                 if(response.data.data.is_active === 1){

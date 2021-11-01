@@ -32,7 +32,8 @@ const Product = () => {
         formState: { errors },
         handleSubmit,
         clearErrors,
-        reset
+        reset,
+        setValue
     } = useForm({
         mode: "onChange" // "onChange"
     });
@@ -225,6 +226,8 @@ const Product = () => {
                 // setProductIsSales(response.data.data.is_sales);
                 // setProductPrice(response.data.data.product_price);
                 // setProductDescription(response.data.data.description);
+                setValue('name', response.data.data.product_name);
+                setValue('price', response.data.data.product_price);
                 setProductDetail({
                     product_name: response.data.data.product_name,
                     product_is_sales: response.data.data.is_sales,

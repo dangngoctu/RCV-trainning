@@ -16,7 +16,8 @@ const Customer = () => {
         formState: { errors },
         handleSubmit,
         clearErrors,
-        reset
+        reset,
+        setValue
     } = useForm({
         mode: "onChange" // "onChange"
     });
@@ -246,6 +247,8 @@ const Customer = () => {
         }
         }).then(response => {
             if (response.data.code === 200) {
+                setValue('name', response.data.data.customer_name);
+                setValue('email', response.data.data.email);
                 setCustomerName(response.data.data.customer_name);
                 setCustomerTelNum(response.data.data.tel_num);
                 setCustomerAddress(response.data.data.address);
