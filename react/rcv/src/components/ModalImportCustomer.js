@@ -19,7 +19,7 @@ const ModalImportCustomer = (props) => {
     const ImportCustomer = () => {
         const dataArray = new FormData();
         dataArray.append("import_file", uploadFile);
-        axios.post("http://training.uk/api/customer/import", dataArray,
+        axios.post("https://cardbey-dev.tech/api/public/api/customer/import", dataArray,
         {
             headers: {
                 'Content-Type': 'application/json',

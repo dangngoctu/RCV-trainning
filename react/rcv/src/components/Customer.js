@@ -80,7 +80,7 @@ const Customer = () => {
     }, [dataSearch]);
 
     const CustomerData = () => {
-        axios.post("http://training.uk/api/customer", {
+        axios.post("https://cardbey-dev.tech/api/public/api/customer", {
             customer_name: name,
             is_active: is_active,
             email: email,
@@ -116,7 +116,7 @@ const Customer = () => {
     }
 
     const SubmitCustomer = () => {
-        axios.post("http://training.uk/api/customer/action", {
+        axios.post("https://cardbey-dev.tech/api/public/api/customer/action", {
             action: action,
             id: id,
             customer_name: customer_name,
@@ -189,7 +189,7 @@ const Customer = () => {
     }
 
     const ExportCustomer = () => {
-        fetch("http://training.uk/api/customer/export", {
+        fetch("https://cardbey-dev.tech/api/public/api/customer/export", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -237,7 +237,7 @@ const Customer = () => {
         setAction('update');
         setId(customer_id);
         window.$('#modalCustomer .modal-title').html('Cập nhật khách hàng');
-        axios.post("http://training.uk/api/customer/detail", {
+        axios.post("https://cardbey-dev.tech/api/public/api/customer/detail", {
             id: customer_id
         },{
         headers: {

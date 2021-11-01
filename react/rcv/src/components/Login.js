@@ -19,7 +19,7 @@ const Login = () => {
     let history = useHistory();
 
     const HandleLogin = () => {
-        axios.post("http://training.uk/api/login", {
+        axios.post("https://cardbey-dev.tech/api/public/api/login", {
             email: email,
             password: password,
             remember_token: remember_token

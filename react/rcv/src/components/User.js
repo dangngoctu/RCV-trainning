@@ -10,6 +10,15 @@ import { useForm } from "react-hook-form";
 
 const User = () => {
 
+    const {
+        register,
+        formState: { errors },
+        handleSubmit,
+        clearErrors,
+        reset
+    } = useForm({
+        mode: "onChange"
+    });
     const [action, setAction] = useState('create');
     const [id, setId] = useState('');
     const [name, setName] = useState('');
@@ -29,16 +38,6 @@ const User = () => {
         email: email,
         is_active: is_active,
         group_role: group_role
-    });
-
-    const {
-        register,
-        formState: { errors },
-        handleSubmit,
-        clearErrors,
-        reset
-    } = useForm({
-        mode: "onChange"
     });
 
     const columns = [
@@ -78,10 +77,37 @@ const User = () => {
 
     useEffect(() => {
         UserData();
-    }, [dataSearch]);
+
+        if(action === "create") {
+            window.$('#email').prop('readonly', false);
+            register('password', { 
+                required: 'Mật khẩu không được trống',
+                minLength: {
+                    value: 5,
+                    message: 'Xác nhận mật khẩu lớn hơn 5 kí tự.'
+                },
+                maxLength: {
+                    value: 255,
+                    message: 'Xác nhận mật khẩu tối đa 255 kí tự!'
+                }
+            })
+        } else {
+            register('password', { 
+                minLength: {
+                    value: 5,
+                    message: 'Xác nhận mật khẩu lớn hơn 5 kí tự.'
+                },
+                maxLength: {
+                    value: 255,
+                    message: 'Xác nhận mật khẩu tối đa 255 kí tự!'
+                }
+            })
+            window.$('#email').prop('readonly', true);
+        }
+    }, [dataSearch, action]);
 
     const UserData = () => {
-        axios.post("http://training.uk/api/user", {
+        axios.post("https://cardbey-dev.tech/api/public/api/user", {
             name: window.$('#FormSearch #InputName').val(),
             email: window.$('#FormSearch #InputEmail').val(),
             group_role: window.$('#FormSearch #InputGroupRole').val(),
@@ -118,7 +144,7 @@ const User = () => {
     }
 
     const SubmitUser = () => {
-        axios.post("http://training.uk/api/user/action", {
+        axios.post("https://cardbey-dev.tech/api/public/api/user/action", {
             action: action,
             id: id,
             name: user_name,
@@ -187,7 +213,7 @@ const User = () => {
             cancelButtonText: 'Huỷ'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.post("http://training.uk/api/user/action", {
+                axios.post("https://cardbey-dev.tech/api/public/api/user/action", {
                     action: 'delete',
                     id: userId,
                 },
@@ -247,7 +273,7 @@ const User = () => {
             cancelButtonText: 'Huỷ'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.post("http://training.uk/api/user/action", {
+                axios.post("https://cardbey-dev.tech/api/public/api/user/action", {
                     action: 'disable',
                     id: userId,
                 },
@@ -309,7 +335,7 @@ const User = () => {
         setAction('update');
         setId(customer_id);
         window.$('#modalUser .modal-title').html('Cập nhật nhân viên');
-        axios.post("http://training.uk/api/user/detail", {
+        axios.post("https://cardbey-dev.tech/api/public/api/user/detail", {
             id: customer_id
         },{
         headers: {
@@ -485,24 +511,15 @@ const User = () => {
                                             </div>
                                             <label htmlFor="inputPassword" className="col-sm-2 col-form-label mg-t-10">Mật khẩu</label>
                                             <div className="col-sm-10 mg-t-10">
-                                                <input type="password" className="form-control" id="password" placeholder="Mật khẩu" 
-                                                    {...register("password", {
-                                                        minLength: {
-                                                            value: 5,
-                                                            message: 'Mật khẩu lớn hơn 5 kí tự.'
-                                                        },
-                                                        maxLength: {
-                                                            value: 255,
-                                                            message: 'Mật khẩu tối đa 255 kí tự!'
-                                                        },
-                                                    })}
+                                                <input type="password" className="form-control" id="password" name="password" placeholder="Mật khẩu" 
+                                                    {...register("password")}
                                                     onChange={(e) => setUserPassword(e.target.value)}
                                                 />
                                                 {errors.password && <p className="text-danger">{errors.password.message}</p>}
                                             </div>
                                             <label htmlFor="inputConfirmPassword" className="col-sm-2 col-form-label mg-t-10">Xác nhận</label>
                                             <div className="col-sm-10 mg-t-10">
-                                                <input type="password" className="form-control" id="re_password" placeholder=" Xác nhận mật khẩu" 
+                                                <input type="password" className="form-control" id="re_password" name="re_password" placeholder=" Xác nhận mật khẩu" 
                                                     {...register("re_password", {
                                                         minLength: {
                                                             value: 5,
