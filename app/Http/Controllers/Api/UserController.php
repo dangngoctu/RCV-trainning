@@ -130,7 +130,7 @@ class UserController extends Controller
                     }
 
                     if($request->has('is_active')){
-                        if($request->is_active === "on"){
+                        if($request->is_active === true){
                             $data['is_active'] = 1;
                         } else {
                             $data['is_active'] = 0;
@@ -145,6 +145,7 @@ class UserController extends Controller
                             return $this->JsonExport(403, 'Email không được trùng.');
                         }
                         $data['email'] = $request->email;
+                        $data['remember_token'] = null;
                         $action = Models\MstUser::create($data);
                     } else {
                         $checkUser = Models\MstUser::where('email', $request->email)->where('id', '!=', $request->id)->first();
@@ -179,6 +180,7 @@ class UserController extends Controller
                     return $this->JsonExport(403, 'Vui lòng kiểm tra lại dữ liệu.');
                 }
             } catch (\Exception $e){
+                DB::rollback();
                 Log::error($e);
                 return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
             }

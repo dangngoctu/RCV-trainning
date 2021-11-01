@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { removeToken, getToken } from '../utils/Common';
 import Header from './Header';
 import Navbar from './Navbar';
-import ModalUser from './ModalUser';
 import DataTable from 'react-data-table-component';
 import axios from 'axios';
 import Swal from 'sweetalert2';
 import { useHistory } from "react-router-dom";
+import { useForm } from "react-hook-form";
 
 const User = () => {
 
@@ -16,9 +16,30 @@ const User = () => {
     const [email, setEmail] = useState('');
     const [is_active, setIsActive] = useState('');
     const [group_role, setGroupRole] = useState('');
-    const childFunc = useRef(null);
+    const [user_name, setUserName] = useState('');
+    const [user_email, setUserEmail] = useState('');
+    const [user_is_active, setUserIsActive] = useState(true);
+    const [user_group_role, setUserGroupRole] = useState('');
+    const [user_password, setUserPassword] = useState('');
+    const [user_repassword, setUserRepassword] = useState('');
     let [data, setData] = useState([]);
     let history = useHistory();
+    let [dataSearch, setDataSearch] = useState({
+        name: name,
+        email: email,
+        is_active: is_active,
+        group_role: group_role
+    });
+
+    const {
+        register,
+        formState: { errors },
+        handleSubmit,
+        clearErrors,
+        reset
+    } = useForm({
+        mode: "onChange"
+    });
 
     const columns = [
         {
@@ -57,7 +78,7 @@ const User = () => {
 
     useEffect(() => {
         UserData();
-    }, []);
+    }, [dataSearch]);
 
     const UserData = () => {
         axios.post("http://training.uk/api/user", {
@@ -96,9 +117,62 @@ const User = () => {
         });
     }
 
+    const SubmitUser = () => {
+        axios.post("http://training.uk/api/user/action", {
+            action: action,
+            id: id,
+            name: user_name,
+            email: user_email,
+            password: user_password,
+            re_password: user_repassword,
+            group_role: user_group_role,
+            is_active: user_is_active
+        },{
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + getToken()
+            }
+        }).then(response => {
+            if (response.data.code === 200) {
+                Swal.fire({
+                    title: 'Thành công!',
+                    text: '',
+                    icon: 'success',
+                })
+                window.$('#modalUser').modal('hide');
+                UserData()
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: response.data.msg,
+                    icon: 'warning',
+                })
+            }
+        }).catch(error => {
+            if(error.response.status === 401 || error.response.status === 400){
+                removeToken('token');
+                history.push('/');
+            } else {
+                Swal.fire({
+                    title: 'Lỗi!',
+                    text: 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+                    icon: 'error',
+                })
+            }
+        });
+    }
+
     let ClearSearch = () => {
-        window.$('#FormSearch')[0].reset();
-        UserData();
+        setName('');
+        setEmail('');
+        setIsActive(true);
+        setGroupRole('');
+        setDataSearch({
+            name: name,
+            email: email,
+            is_active: is_active,
+            group_role: group_role
+        });
     }
 
     let onDelete = (userId) => {
@@ -215,13 +289,19 @@ const User = () => {
     }
 
     let ClearModal = (action) => {
-        window.$('#FormModal')[0].reset();
         if(action === "create") {
             window.$('#email').prop('readonly', false);
         } else {
             window.$('#email').prop('readonly', true);
         }
-        childFunc.current();
+        setUserName('');
+        setUserEmail('');
+        setUserPassword('');
+        setUserRepassword('');
+        setUserGroupRole('');
+        setUserIsActive(true);
+        clearErrors();
+        reset();
     }
 
     const onUpdate = (customer_id) => {
@@ -238,12 +318,14 @@ const User = () => {
         }
         }).then(response => {
             if (response.data.code === 200) {
-                window.$('#name').val(response.data.data.name);
-                window.$('#email').val(response.data.data.email);
-                window.$('#group_role').val(response.data.data.group_role).trigger('change');
+                setUserName(response.data.data.name);
+                setUserEmail(response.data.data.email);
                 if(response.data.data.is_active === 1){
-                    window.$('#is_active').prop('checked', true);
+                    setUserIsActive(true);
+                } else {
+                    setUserIsActive(false);
                 }
+                setUserGroupRole(response.data.data.group_role);
             } else {
                 Swal.fire({
                     title: 'Lỗi!',
@@ -267,8 +349,8 @@ const User = () => {
     }
 
     let CreateModal = () => {
-        ClearModal();
-        setAction('create');
+        ClearModal("create");
+        setAction("create");
         window.$('#modalUser .modal-title').html('Thêm nhân viên');
         window.$('#modalUser').modal('show');
     }
@@ -277,7 +359,6 @@ const User = () => {
         <div>
             <Header />
             <Navbar />
-            <ModalUser action={action} id={id} userData={UserData} childFunc={childFunc}/>
             <div className="content-wrapper">
                 <div className='pd-15'>
                     <div className="filter mg-b-10">
@@ -286,7 +367,7 @@ const User = () => {
                                 <div className="col-12 col-md-3">
                                     <div className="form-group">
                                         <label htmlFor="InputName">Tên</label>
-                                        <input type="text" className="form-control" id="InputName" placeholder="Nhập họ tên"
+                                        <input type="text" className="form-control" id="InputName" placeholder="Nhập họ tên" value={name}
                                             onChange={e => setName(e.target.value)}
                                         />
                                     </div>
@@ -294,7 +375,7 @@ const User = () => {
                                 <div className="col-12 col-md-3">
                                     <div className="form-group">
                                         <label htmlFor="InputEmail">Email</label>
-                                        <input type="text" className="form-control" id="InputEmail" placeholder="Nhập email"
+                                        <input type="text" className="form-control" id="InputEmail" placeholder="Nhập email" value={email}
                                             onChange={e => setEmail(e.target.value)}
                                         />
                                     </div>
@@ -303,7 +384,7 @@ const User = () => {
                                     <div className="form-group">
                                         <label htmlFor="InputGroupRole">Nhóm</label>
                                         <select className="form-control" id="InputGroupRole"
-                                            onChange={e => setGroupRole(e.target.value)}>
+                                            onChange={e => setGroupRole(e.target.value)} value={group_role}>
                                             <option label="Chọn nhóm"></option>
                                             <option value="1">Admin</option>
                                             <option value="2">Editer</option>
@@ -315,7 +396,7 @@ const User = () => {
                                     <div className="form-group">
                                         <label htmlFor="InputIsActive">Trạng thái</label>
                                         <select className="form-control" id="InputIsActive"
-                                            onChange={e => setIsActive(e.target.value)}>
+                                            onChange={e => setIsActive(e.target.value)} value={is_active}>
                                             <option label="Chọn trạng thái"></option>
                                             <option value="1">Đang hoạt động</option>
                                             <option value="0">Tạm Khóa</option>
@@ -344,6 +425,121 @@ const User = () => {
                             paginationComponentOptions={paginationComponentOptions}
                             responsive
                         />
+                    </div>
+                </div>
+            </div>
+
+            <div className="modal fade" id="modalUser">
+                <div className="modal-dialog modal-xl">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h4 className="modal-title">Default Modal</h4>
+                            <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">×</span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <div className="row">
+                                <div className="col-12 col-md-12">
+                                    <form id="FormModal">
+                                        <div className="form-group row">
+                                            <label htmlFor="inputName" className="col-sm-2 col-form-label">Họ tên</label>
+                                            <div className="col-sm-10">
+                                                <input type="text" className="form-control" id="name" placeholder="Tên" value={user_name}
+                                                    {...register("name", {
+                                                        required: 'Tên không được trống!',
+                                                        minLength: {
+                                                            value: 5,
+                                                            message: 'Tên phải lớn hơn 5 kí tự.'
+                                                        },
+                                                        maxLength: {
+                                                            value: 255,
+                                                            message: 'Tên tối đa 255 kí tự!'
+                                                        },
+                                                    })}
+                                                    onChange={(e) => setUserName(e.target.value)}
+                                                />
+                                                {errors.name && <p className="text-danger">{errors.name.message}</p>}
+                                            </div>
+                                            <label htmlFor="inputEmail" className="col-sm-2 col-form-label mg-t-10">Email</label>
+                                            <div className="col-sm-10">
+                                                <input type="email" step="1" className="form-control mg-t-10" id="email" placeholder="Email" value={user_email}
+                                                    {...register("email", {
+                                                        required: 'Email không được trống!',
+                                                        minLength: {
+                                                            value: 5,
+                                                            message: 'Email tối thiểu 5 kí tự!'
+                                                        },
+                                                        maxLength: {
+                                                            value: 255,
+                                                            message: 'Email tối đa 255 kí tự!'
+                                                        },
+                                                        pattern: {
+                                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                                                            message: 'Email không hợp lệ',
+                                                        }
+                                                    })}
+                                                    onChange={(e) => setUserEmail(e.target.value)}
+                                                />
+                                                {errors.email && <p className="text-danger">{errors.email.message}</p>}
+                                            </div>
+                                            <label htmlFor="inputPassword" className="col-sm-2 col-form-label mg-t-10">Mật khẩu</label>
+                                            <div className="col-sm-10 mg-t-10">
+                                                <input type="password" className="form-control" id="password" placeholder="Mật khẩu" 
+                                                    {...register("password", {
+                                                        minLength: {
+                                                            value: 5,
+                                                            message: 'Mật khẩu lớn hơn 5 kí tự.'
+                                                        },
+                                                        maxLength: {
+                                                            value: 255,
+                                                            message: 'Mật khẩu tối đa 255 kí tự!'
+                                                        },
+                                                    })}
+                                                    onChange={(e) => setUserPassword(e.target.value)}
+                                                />
+                                                {errors.password && <p className="text-danger">{errors.password.message}</p>}
+                                            </div>
+                                            <label htmlFor="inputConfirmPassword" className="col-sm-2 col-form-label mg-t-10">Xác nhận</label>
+                                            <div className="col-sm-10 mg-t-10">
+                                                <input type="password" className="form-control" id="re_password" placeholder=" Xác nhận mật khẩu" 
+                                                    {...register("re_password", {
+                                                        minLength: {
+                                                            value: 5,
+                                                            message: 'Xác nhận mật khẩu lớn hơn 5 kí tự.'
+                                                        },
+                                                        maxLength: {
+                                                            value: 255,
+                                                            message: 'Xác nhận mật khẩu tối đa 255 kí tự!'
+                                                        }
+                                                    })}
+                                                    onChange={(e) => setUserRepassword(e.target.value)}
+                                                />
+                                                {errors.re_password && <p className="text-danger">{errors.re_password.message}</p>}
+                                            </div>
+                                            <label htmlFor="inputIsSales" className="col-sm-2 col-form-label mg-t-10">Nhóm</label>
+                                            <div className="col-sm-10">
+                                                <select className="form-control mg-t-10" id="group_role" onChange={(e) => setUserGroupRole(e.target.value)} 
+                                                    value={user_group_role}>
+                                                    <option label="Chọn nhóm"></option>
+                                                    <option value="1">Admin</option>
+                                                    <option value="2">Editer</option>
+                                                    <option value="3">Reviewer</option>
+                                                </select>
+                                            </div>
+                                            <label htmlFor="inputIsActive" className="col-sm-2 col-form-label mg-t-10">Trạng Thái</label>
+                                                <div className="col-sm-10 mg-t-10">
+                                                    <input type="checkbox" id="is_active" onChange={(e) => setUserIsActive(e.target.checked)} defaultChecked={user_is_active}/>
+                                                </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            <div className="modal-footer justify-content-between mg-t-10">
+                                <button type="button" className="btn btn-default" data-dismiss="modal" >Đóng</button>
+                                <button type="button" className="btn btn-primary" onClick={handleSubmit(SubmitUser)}>Lưu</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

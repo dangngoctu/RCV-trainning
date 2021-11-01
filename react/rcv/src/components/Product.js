@@ -454,7 +454,7 @@ const Product = () => {
                                             <input type="file" id="product_image_file" onChange={(e) => setUploadFile(e.target.files[0])} accept="image/jpg, image/jpeg, image/png" />
                                         </div>
                                         <div className="col-12 col-md-12  mg-t-10">
-                                            <img className="w-100" src='' id="product_image"></img>
+                                            <img alt="" className="w-100" src='' id="product_image"></img>
                                         </div>
                                     </div>
                                 </div>
