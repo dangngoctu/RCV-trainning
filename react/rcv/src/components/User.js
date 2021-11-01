@@ -19,7 +19,7 @@ const User = () => {
     } = useForm({
         mode: "onChange"
     });
-    const [action, setAction] = useState('create');
+    const [action, setAction] = useState('');
     const [id, setId] = useState('');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -77,9 +77,7 @@ const User = () => {
 
     useEffect(() => {
         UserData();
-
         if(action === "create") {
-            window.$('#email').prop('readonly', false);
             register('password', { 
                 required: 'Mật khẩu không được trống',
                 minLength: {
@@ -91,7 +89,7 @@ const User = () => {
                     message: 'Xác nhận mật khẩu tối đa 255 kí tự!'
                 }
             })
-        } else {
+        } else if (action === "update") {
             register('password', { 
                 minLength: {
                     value: 5,
@@ -102,7 +100,7 @@ const User = () => {
                     message: 'Xác nhận mật khẩu tối đa 255 kí tự!'
                 }
             })
-            window.$('#email').prop('readonly', true);
+        } else {
         }
     }, [dataSearch, action]);
 
@@ -320,6 +318,7 @@ const User = () => {
         } else {
             window.$('#email').prop('readonly', true);
         }
+        setAction(action);
         setUserName('');
         setUserEmail('');
         setUserPassword('');
@@ -332,7 +331,6 @@ const User = () => {
 
     const onUpdate = (customer_id) => {
         ClearModal('update');
-        setAction('update');
         setId(customer_id);
         window.$('#modalUser .modal-title').html('Cập nhật nhân viên');
         axios.post("https://cardbey-dev.tech/api/public/api/user/detail", {
@@ -376,7 +374,6 @@ const User = () => {
 
     let CreateModal = () => {
         ClearModal("create");
-        setAction("create");
         window.$('#modalUser .modal-title').html('Thêm nhân viên');
         window.$('#modalUser').modal('show');
     }
@@ -512,7 +509,16 @@ const User = () => {
                                             <label htmlFor="inputPassword" className="col-sm-2 col-form-label mg-t-10">Mật khẩu</label>
                                             <div className="col-sm-10 mg-t-10">
                                                 <input type="password" className="form-control" id="password" name="password" placeholder="Mật khẩu" 
-                                                    {...register("password")}
+                                                    {...register("password", {
+                                                        minLength: {
+                                                            value: 5,
+                                                            message: 'Xác nhận mật khẩu lớn hơn 5 kí tự.'
+                                                        },
+                                                        maxLength: {
+                                                            value: 255,
+                                                            message: 'Xác nhận mật khẩu tối đa 255 kí tự!'
+                                                        }
+                                                    })}
                                                     onChange={(e) => setUserPassword(e.target.value)}
                                                 />
                                                 {errors.password && <p className="text-danger">{errors.password.message}</p>}
