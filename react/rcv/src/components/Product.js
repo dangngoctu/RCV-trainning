@@ -16,10 +16,16 @@ const Product = () => {
     const [is_sales, setIsSales] = useState('');
     const [price_from, setPriceFrom] = useState('');
     const [price_to, setPriceTo] = useState('');
-    const [product_name, setProductName] = useState('');
-    const [product_is_sales, setProductIsSales] = useState(1);
-    const [product_price, setProductPrice] = useState('');
-    const [description, setProductDescription] = useState('');
+    const [product_detail, setProductDetail] = useState({
+        product_name: '',
+        product_is_sales: 1,
+        product_price: '',
+        description: '',
+    });
+    // const [product_name, setProductName] = useState('');
+    // const [product_is_sales, setProductIsSales] = useState(1);
+    // const [product_price, setProductPrice] = useState('');
+    // const [description, setProductDescription] = useState('');
     const [uploadFile, setUploadFile] = useState();
     const {
         register,
@@ -124,10 +130,14 @@ const Product = () => {
         const dataArray = new FormData();
         dataArray.append("action", action);
         dataArray.append("id", id);
-        dataArray.append("product_name", product_name);
-        dataArray.append("is_sales", product_is_sales);
-        dataArray.append("product_price", product_price);
-        dataArray.append("description", description);
+        dataArray.append("product_name", product_detail.product_name);
+        dataArray.append("is_sales", product_detail.product_is_sales);
+        dataArray.append("product_price", product_detail.product_price);
+        dataArray.append("description", product_detail.description);
+        // dataArray.append("product_name", product_name);
+        // dataArray.append("is_sales", product_is_sales);
+        // dataArray.append("product_price", product_price);
+        // dataArray.append("description", description);
         dataArray.append("file", uploadFile);
         axios.post("https://cardbey-dev.tech/api/public/api/product/action", dataArray,
             {
@@ -181,10 +191,16 @@ const Product = () => {
     const ClearModal = () => {
         window.$('#product_image_file').val('');
         window.$('#product_image').prop('src', '');
-        setProductName('');
-        setProductIsSales('');
-        setProductPrice('');
-        setProductDescription('');
+        setProductDetail({
+            product_name: '',
+            product_is_sales: 1,
+            product_price: '',
+            description: '',
+        });
+        // setProductName('');
+        // setProductIsSales('');
+        // setProductPrice('');
+        // setProductDescription('');
         setUploadFile();
         clearErrors();
         reset();
@@ -205,10 +221,16 @@ const Product = () => {
         }
         }).then(response => {
             if (response.data.code === 200) {
-                setProductName(response.data.data.product_name);
-                setProductIsSales(response.data.data.is_sales);
-                setProductPrice(response.data.data.product_price);
-                setProductDescription(response.data.data.description);
+                // setProductName(response.data.data.product_name);
+                // setProductIsSales(response.data.data.is_sales);
+                // setProductPrice(response.data.data.product_price);
+                // setProductDescription(response.data.data.description);
+                setProductDetail({
+                    product_name: response.data.data.product_name,
+                    product_is_sales: response.data.data.is_sales,
+                    product_price: response.data.data.product_price,
+                    description: response.data.data.description,
+                });
                 if(response.data.data.product_image){
                     window.$('#product_image').prop('src', 'https://cardbey-dev.tech/api/public/img/product/'+response.data.data.product_image);
                 } else {
@@ -386,7 +408,7 @@ const Product = () => {
                                                 <div className="row">
                                                     <label htmlFor="inputName" className="col-sm-2 col-form-label">Tên sản phẩm</label>
                                                     <div className="col-sm-10">
-                                                        <input type="text" className="form-control" id="product_name" placeholder="Tên sản phẩm" required value={product_name}
+                                                        <input type="text" className="form-control" id="product_name" placeholder="Tên sản phẩm" required value={product_detail.product_name}
                                                             {...register("name", {
                                                                 required: 'Tên không được trống!',
                                                                 minLength: {
@@ -398,7 +420,10 @@ const Product = () => {
                                                                     message: 'Tên tối đa 255 kí tự!'
                                                                 },
                                                             })}
-                                                            onChange={e => setProductName(e.target.value)}
+                                                            onChange={e => setProductDetail({
+                                                                ...product_detail,
+                                                                product_name: e.target.value,
+                                                            })}
                                                         />
                                                         {errors.name && <p className="text-danger">{errors.name.message}</p>}
                                                     </div>
@@ -408,7 +433,7 @@ const Product = () => {
                                                 <div className="row">
                                                     <label htmlFor="inputPrice" className="col-sm-2 col-form-label mg-t-10">Giá bán</label>
                                                     <div className="col-sm-10">
-                                                        <input type="number" step="1" className="form-control mg-t-10" id="product_price" placeholder="Giá sản phẩm" value={product_price} required
+                                                        <input type="number" step="1" className="form-control mg-t-10" id="product_price" placeholder="Giá sản phẩm" value={product_detail.product_price} required
                                                             {...register("price", {
                                                                 required: 'Giá không được trống!',
                                                                 min: {
@@ -420,7 +445,10 @@ const Product = () => {
                                                                     message: 'Giá không được lớn hơn 999999'
                                                                 }
                                                             })}
-                                                            onChange={e => setProductPrice(e.target.value)}
+                                                            onChange={e => setProductDetail({
+                                                                ...product_detail,
+                                                                product_price: e.target.value,
+                                                            })}
                                                         />
                                                          {errors.price && <p className="text-danger">{errors.price.message}</p>}
                                                     </div>
@@ -429,14 +457,20 @@ const Product = () => {
                                             
                                             <label htmlFor="inputDescription" className="col-sm-2 col-form-label mg-t-10">Mô tả</label>
                                             <div className="col-sm-10">
-                                                <textarea rows="4" className="form-control mg-t-10" id="description" placeholder="Mô tả sản phẩm" value={description}
-                                                    onChange={e => setProductDescription(e.target.value)}
+                                                <textarea rows="4" className="form-control mg-t-10" id="description" placeholder="Mô tả sản phẩm" value={product_detail.description}
+                                                    onChange={e => setProductDetail({
+                                                        ...product_detail,
+                                                        description: e.target.value,
+                                                    })}
                                                 />
                                             </div>
                                             <label htmlFor="inputIsSales" className="col-sm-2 col-form-label mg-t-10">Trạng thái</label>
                                             <div className="col-sm-10">
-                                                <select className="form-control mg-t-10" id="is_sales" value={product_is_sales}
-                                                    onChange={e => setProductIsSales(e.target.value)}
+                                                <select className="form-control mg-t-10" id="is_sales" value={product_detail.product_is_sales}
+                                                    onChange={e => setProductDetail({
+                                                        ...product_detail,
+                                                        product_is_sales: e.target.value,
+                                                    })}
                                                 >
                                                     <option value="1">Đang bán</option>
                                                     <option value="2">Đang hết hàng</option>
