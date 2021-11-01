@@ -166,7 +166,6 @@ const Product = () => {
     }
 
     const ClearSearch = () => {
-        window.$('#FormSearch')[0].reset();
         setName('');
         setIsSales('');
         setPriceFrom('');
@@ -180,7 +179,6 @@ const Product = () => {
     }
 
     const ClearModal = () => {
-        window.$('#FormModal')[0].reset();
         window.$('#product_image_file').val('');
         window.$('#product_image').prop('src', '');
         setProductName('');

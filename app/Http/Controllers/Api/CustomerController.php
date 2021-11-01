@@ -127,7 +127,11 @@ class CustomerController extends Controller
                 }
 
                 if(!empty($request->is_active) && $request->has('is_active')){
-                    $data['is_active'] = $request->is_active;
+                    if($request->is_active === true){
+                        $data['is_active'] = 1;
+                    } else {
+                        $data['is_active'] = 0;
+                    }
                 } else {
                     $data['is_active'] = 0;
                 }
