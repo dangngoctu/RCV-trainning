@@ -12,7 +12,8 @@ const ModalImportCustomer = (props) => {
     const {
         register,
         formState: { errors },
-        handleSubmit
+        handleSubmit,
+        clearErrors
     } = useForm({
         mode: "onChange"
     });
@@ -22,7 +23,7 @@ const ModalImportCustomer = (props) => {
         axios.post("https://cardbey-dev.tech/api/public/api/customer/import", dataArray,
         {
             headers: {
-                'Content-Type': 'application/json',
+                "Content-Type": "multipart/form-data",
                 'Authorization': 'Bearer ' + getToken()
             }
         }).then(response => {
@@ -33,6 +34,7 @@ const ModalImportCustomer = (props) => {
                     icon: 'success',
                 })
                 props.customerData();
+                clearErrors();
                 window.$('#modalImportCustomer').modal('hide');
             } else {
                 Swal.fire({
@@ -70,10 +72,11 @@ const ModalImportCustomer = (props) => {
                                 <div className="col-12 col-md-8">
                                     <form id="FormModalImport">
                                         <div className="col-12 col-md-12">
-                                            <input type="file" id="customerImportFile" onChange={(e) => setUploadFile(e.target.files[0])} accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+                                            <input type="file" id="customerImportFile" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
                                                 {...register("file_import", {
                                                     required: 'File import không được trống!'
                                                 })}
+                                                onChange={(e) => setUploadFile(e.target.files[0])}
                                             />
                                             {errors.file_import && <p className="text-danger">{errors.file_import.message}</p>}
                                         </div>

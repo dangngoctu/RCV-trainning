@@ -331,7 +331,7 @@ const Product = () => {
                             <div className="row">
                                 <div className="col-12 col-md-3">
                                     <div className="form-group">
-                                        <label htmlFor="InputName">Tên sản phẩm</label>
+                                        <label htmlFor="InputName">Tên sản phẩm </label>
                                         <input type="text" className="form-control" id="InputName" placeholder="Nhập tên sản phẩm"
                                             onChange={e => setName(e.target.value)}
                                         />
@@ -409,7 +409,7 @@ const Product = () => {
                                         <div className="form-group row">
                                             <div className="col-12">
                                                 <div className="row">
-                                                    <label htmlFor="inputName" className="col-sm-2 col-form-label">Tên sản phẩm</label>
+                                                    <label htmlFor="inputName" className="col-sm-2 col-form-label">Tên sản phẩm<span className="text-danger"> *</span></label>
                                                     <div className="col-sm-10">
                                                         <input type="text" className="form-control" id="product_name" placeholder="Tên sản phẩm" required value={product_detail.product_name}
                                                             {...register("name", {
@@ -434,7 +434,7 @@ const Product = () => {
                                             </div>
                                             <div className="col-12">
                                                 <div className="row">
-                                                    <label htmlFor="inputPrice" className="col-sm-2 col-form-label mg-t-10">Giá bán</label>
+                                                    <label htmlFor="inputPrice" className="col-sm-2 col-form-label mg-t-10">Giá bán <span className="text-danger"> *</span></label>
                                                     <div className="col-sm-10">
                                                         <input type="number" step="1" className="form-control mg-t-10" id="product_price" placeholder="Giá sản phẩm" value={product_detail.product_price} required
                                                             {...register("price", {

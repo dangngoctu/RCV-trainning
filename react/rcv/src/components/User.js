@@ -347,7 +347,7 @@ const User = () => {
                 setValue('email', response.data.data.email);
                 setUserName(response.data.data.name);
                 setUserEmail(response.data.data.email);
-                if(response.data.data.is_active === 1){
+                if(parseInt(response.data.data.is_active) === 1){
                     setUserIsActive(true);
                 } else {
                     setUserIsActive(false);
@@ -469,7 +469,7 @@ const User = () => {
                                 <div className="col-12 col-md-12">
                                     <form id="FormModal">
                                         <div className="form-group row">
-                                            <label htmlFor="inputName" className="col-sm-2 col-form-label">Họ tên</label>
+                                            <label htmlFor="inputName" className="col-sm-2 col-form-label">Họ tên <span className="text-danger"> *</span></label>
                                             <div className="col-sm-10">
                                                 <input type="text" className="form-control" id="name" placeholder="Tên" value={user_name}
                                                     {...register("name", {
@@ -487,7 +487,7 @@ const User = () => {
                                                 />
                                                 {errors.name && <p className="text-danger">{errors.name.message}</p>}
                                             </div>
-                                            <label htmlFor="inputEmail" className="col-sm-2 col-form-label mg-t-10">Email</label>
+                                            <label htmlFor="inputEmail" className="col-sm-2 col-form-label mg-t-10">Email <span className="text-danger"> *</span></label>
                                             <div className="col-sm-10">
                                                 <input type="email" step="1" className="form-control mg-t-10" id="email" placeholder="Email" value={user_email}
                                                     {...register("email", {
@@ -505,7 +505,12 @@ const User = () => {
                                                             message: 'Email không hợp lệ',
                                                         }
                                                     })}
-                                                    onChange={(e) => setUserEmail(e.target.value)}
+                                                    onChange={(e) => {
+                                                        if (e.target.value.indexOf(" ") > -1) {
+                                                            return;
+                                                        }
+                                                        setUserEmail(e.target.value)
+                                                    }}
                                                 />
                                                 {errors.email && <p className="text-danger">{errors.email.message}</p>}
                                             </div>

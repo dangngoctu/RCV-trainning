@@ -117,6 +117,7 @@ const Customer = () => {
     }
 
     const SubmitCustomer = () => {
+        console.log(customer_is_active);
         axios.post("https://cardbey-dev.tech/api/public/api/customer/action", {
             action: action,
             id: id,
@@ -253,7 +254,7 @@ const Customer = () => {
                 setCustomerTelNum(response.data.data.tel_num);
                 setCustomerAddress(response.data.data.address);
                 setCustomerEmail(response.data.data.email);
-                if(response.data.data.is_active === 1){
+                if(parseInt(response.data.data.is_active) === 1){
                     setCustomerIsActive(true);
                 } else {
                     setCustomerIsActive(false);
@@ -373,7 +374,7 @@ const Customer = () => {
                                 <div className="col-12">
                                     <form id="FormModalCustomer">
                                         <div className="form-group row">
-                                                <label htmlFor="inputName" className="col-sm-3 col-form-label">Tên khách hàng</label>
+                                                <label htmlFor="inputName" className="col-sm-3 col-form-label">Tên khách hàng<span className="text-danger"> *</span></label>
                                                 <div className="col-sm-9">
                                                     <input type="text" className="form-control" id="customer_name" placeholder="Tên khách hàng" required
                                                         value = {customer_name}
@@ -393,7 +394,7 @@ const Customer = () => {
                                                     {errors.name && <p className="text-danger">{errors.name.message}</p>}
                                                 </div>
 
-                                                <label htmlFor="inputEmail" className="col-sm-3 col-form-label mg-t-10">Email</label>
+                                                <label htmlFor="inputEmail" className="col-sm-3 col-form-label mg-t-10">Email <span className="text-danger"> *</span></label>
                                                 <div className="col-sm-9">
                                                     <input type="text" className="form-control mg-t-10" id="email" placeholder="Email" required
                                                         value = {customer_email}
@@ -412,7 +413,12 @@ const Customer = () => {
                                                                 message: 'Email không hợp lệ',
                                                             }
                                                         })}
-                                                        onChange={e => setCustomerEmail(e.target.value)}
+                                                        onChange={e => {
+                                                            if (e.target.value.indexOf(" ") > -1) {
+                                                                return;
+                                                            }
+                                                            setCustomerEmail(e.target.value)
+                                                        }}
                                                     />
                                                     {errors.email && <p className="text-danger">{errors.email.message}</p>}
                                                 </div>

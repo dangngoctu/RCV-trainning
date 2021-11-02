@@ -119,7 +119,7 @@ class ProductController extends Controller
         if ($validator->fails()) {
             return $this->JsonExport(403, $validator->errors()->first());
         } else {
-            // try {
+            try {
                 DB::beginTransaction();
                 $data = [];
                 $dir_file = public_path('img/product');
@@ -147,7 +147,6 @@ class ProductController extends Controller
                     }
     
                     if($request->has('file') && !empty($request->file) && $request->file != 'undefined'){
-                        return $request->file;
                         $product_image = 'productImage_'.time().'.'.$request->file->getClientOriginalExtension();
                         $data['product_image'] = $product_image;
                     }
@@ -202,11 +201,11 @@ class ProductController extends Controller
                     DB::rollback();
                     return $this->JsonExport(403, 'Vui lòng kiểm tra lại dữ liệu.');
                 }
-            // } catch (\Exception $e){
-            //     DB::rollback();
-            //     Log::error($e);
-            //     return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
-            // }
+            } catch (\Exception $e){
+                DB::rollback();
+                Log::error($e);
+                return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
+            }
         }
     }
 }
