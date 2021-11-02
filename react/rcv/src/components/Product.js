@@ -403,7 +403,7 @@ const Product = () => {
             </div>
 
             <div className="modal fade" id="modalProduct">
-                <div className="modal-dialog modal-xl">
+                <div className="modal-dialog modal-xxl">
                     <div className="modal-content">
                         <div className="modal-header">
                             <h4 className="modal-title">Default Modal</h4>
