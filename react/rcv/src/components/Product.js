@@ -332,7 +332,7 @@ const Product = () => {
                                 <div className="col-12 col-md-3">
                                     <div className="form-group">
                                         <label htmlFor="InputName">Tên sản phẩm </label>
-                                        <input type="text" className="form-control" id="InputName" placeholder="Nhập tên sản phẩm"
+                                        <input type="text" className="form-control" id="InputName" placeholder="Nhập tên sản phẩm" value={name}
                                             onChange={e => setName(e.target.value)}
                                         />
                                     </div>
@@ -340,7 +340,7 @@ const Product = () => {
                                 <div className="col-12 col-md-3">
                                     <div className="form-group">
                                         <label htmlFor="InputIsSale">Trạng thái</label>
-                                        <select className="form-control" id="InputIsSale"
+                                        <select className="form-control" id="InputIsSale" value={is_sales}
                                             onChange={e => setIsSales(e.target.value)}>
                                             <option label="Chọn trạng thái"></option>
                                             <option value="1">Đang bán</option>
@@ -352,7 +352,7 @@ const Product = () => {
                                 <div className="col-12 col-md-3">
                                     <div className="form-group">
                                         <label htmlFor="InputPriceFrom">Giá bán từ</label>
-                                        <input type="number" className="form-control" id="InputPriceFrom" placeholder="Nhập giá bán tới"
+                                        <input type="number" min="0" step="1" className="form-control" id="InputPriceFrom" placeholder="Nhập giá bán từ" value={price_from}
                                             onChange={e => setPriceFrom(e.target.value)}
                                         />
                                     </div>
@@ -360,7 +360,7 @@ const Product = () => {
                                 <div className="col-12 col-md-3">
                                     <div className="form-group">
                                         <label htmlFor="InputPriceTo">Giá bán tới</label>
-                                        <input type="number" className="form-control" id="InputPriceTo" placeholder="Nhập giá bán từ"
+                                        <input type="number" min="0" step="1" className="form-control" id="InputPriceTo" placeholder="Nhập giá bán tới" value={price_to}
                                             onChange={e => setPriceTo(e.target.value)}
                                         />
                                     </div>
@@ -427,6 +427,32 @@ const Product = () => {
                                                                 ...product_detail,
                                                                 product_name: e.target.value,
                                                             })}
+                                                            onBlur = {
+                                                                () => {
+                                                                    let temp_product_name = product_detail.product_name;
+                                                                    if(temp_product_name.length > 0){
+                                                                        for(var i = 0; i <= temp_product_name.length -1; i++) {
+                                                                            if(temp_product_name.charAt(i) !== " "){
+                                                                                break;
+                                                                            }
+                                                                        }
+                                                                        temp_product_name = temp_product_name.substr(i);
+
+                                                                        for(var j = 0; j <= temp_product_name.length -1; j++) {
+                                                                            if(temp_product_name.charAt(temp_product_name.length - 1) === " "){
+                                                                                temp_product_name = temp_product_name.substr(0, temp_product_name.length - 1)
+                                                                            } else {
+                                                                                break;
+                                                                            }
+                                                                        } 
+                                                                    }
+                                                                    setProductDetail({
+                                                                        ...product_detail,
+                                                                        product_name: temp_product_name,
+                                                                    })
+                                                                    setValue('name', temp_product_name);
+                                                                }
+                                                            }
                                                         />
                                                         {errors.name && <p className="text-danger">{errors.name.message}</p>}
                                                     </div>
@@ -436,7 +462,7 @@ const Product = () => {
                                                 <div className="row">
                                                     <label htmlFor="inputPrice" className="col-sm-2 col-form-label mg-t-10">Giá bán <span className="text-danger"> *</span></label>
                                                     <div className="col-sm-10">
-                                                        <input type="number" step="1" className="form-control mg-t-10" id="product_price" placeholder="Giá sản phẩm" value={product_detail.product_price} required
+                                                        <input type="number" step="1" min="0" className="form-control mg-t-10" id="product_price" placeholder="Giá sản phẩm" value={product_detail.product_price} required
                                                             {...register("price", {
                                                                 required: 'Giá không được trống!',
                                                                 min: {

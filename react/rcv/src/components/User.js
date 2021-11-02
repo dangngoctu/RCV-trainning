@@ -484,6 +484,30 @@ const User = () => {
                                                         },
                                                     })}
                                                     onChange={(e) => setUserName(e.target.value)}
+                                                    onBlur = {
+                                                        () => {
+                                                            let temp_user_name = user_name;
+                                                            if(temp_user_name.length > 0){
+                                                                for(var i = 0; i <= temp_user_name.length -1; i++) {
+                                                                    if(temp_user_name.charAt(i) !== " "){
+                                                                        break;
+                                                                    }
+                                                                }
+                                                                temp_user_name = temp_user_name.substr(i);
+                                                                
+                                                                for(var j = 1; j <= temp_user_name.length -1; j++) {
+                                                                    if(temp_user_name.charAt(temp_user_name.length - 1) === " "){
+                                                                        temp_user_name = temp_user_name.substr(0, temp_user_name.length - 1)
+                                                                    } else {
+                                                                        console.log(temp_user_name.charAt(temp_user_name.length - 1));
+                                                                        break;
+                                                                    }
+                                                                }   
+                                                            }
+                                                            setUserName(temp_user_name)
+                                                            setValue('name', temp_user_name);
+                                                        }
+                                                    }
                                                 />
                                                 {errors.name && <p className="text-danger">{errors.name.message}</p>}
                                             </div>

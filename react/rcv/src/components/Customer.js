@@ -390,6 +390,29 @@ const Customer = () => {
                                                             },
                                                         })}
                                                         onChange={e => setCustomerName(e.target.value)}
+                                                        onBlur = {
+                                                            () => {
+                                                                let temp_customer_name = customer_name;
+                                                                if(temp_customer_name.length > 0){
+                                                                    for(var i = 0; i <= temp_customer_name.length -1; i++) {
+                                                                        if(temp_customer_name.charAt(i) !== " "){
+                                                                            break;
+                                                                        }
+                                                                    }
+                                                                    temp_customer_name = temp_customer_name.substr(i);
+
+                                                                    for(var j = 0; j <= temp_customer_name.length -1; j++) {
+                                                                        if(temp_customer_name.charAt(temp_customer_name.length - 1) === " "){
+                                                                            temp_customer_name = temp_customer_name.substr(0, temp_customer_name.length - 1)
+                                                                        } else {
+                                                                            break;
+                                                                        }
+                                                                    } 
+                                                                }
+                                                                setCustomerName(temp_customer_name)
+                                                                setValue('name', temp_customer_name);
+                                                            }
+                                                        }
                                                     />
                                                     {errors.name && <p className="text-danger">{errors.name.message}</p>}
                                                 </div>
