@@ -33,7 +33,7 @@ class MstCustomer extends Model
 	protected $primaryKey = 'customer_id';
 
 	protected $casts = [
-		'is_acive' => 'int'
+		'is_active' => 'int'
 	];
 
 	protected $fillable = [
@@ -41,7 +41,7 @@ class MstCustomer extends Model
 		'email',
 		'tel_num',
 		'address',
-		'is_acive',
+		'is_active',
 		'description'
 	];
 

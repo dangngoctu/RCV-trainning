@@ -66,7 +66,7 @@ class LoginController extends Controller
                 if($request->has('remember_token') && !empty($request->remember_token)){
                     $data['remember_token'] = $token;
                 } else {
-                    $data['remember_token'] = $token;
+                    $data['remember_token'] = null;
                 }
 
                 $updateToken = $userData->update($data);

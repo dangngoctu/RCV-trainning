@@ -48,8 +48,18 @@ class ProductController extends Controller
                     ->addColumn('is_sales_show', function ($v) {
                         if($v->is_sales == 1){
                             return 'Đang bán';
-                        } else {
+                        } else if ($v->is_sales == 2){
+                            return 'Đang hết hàng';
+                        }else {
                             return 'Ngừng bán';
+                        }
+                    })
+                    ->editColumn('description', function ($v){
+                        if(strlen($v->description) > 50){
+                            $string = mb_substr($v->description ,0, 50). '...';
+                            return $string;
+                        } else {
+                            return $v->description;
                         }
                     })
                     ->rawColumns(['action'])

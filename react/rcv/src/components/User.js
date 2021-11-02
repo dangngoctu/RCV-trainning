@@ -142,6 +142,12 @@ const User = () => {
         });
     }
 
+    const EnterPress = (e) => {
+        if(e.key === "Enter"){
+            UserData()
+        }
+    }
+
     const SubmitUser = () => {
         axios.post("https://cardbey-dev.tech/api/public/api/user/action", {
             action: action,
@@ -395,6 +401,7 @@ const User = () => {
                                         <label htmlFor="InputName">Tên</label>
                                         <input type="text" className="form-control" id="InputName" placeholder="Nhập họ tên" value={name}
                                             onChange={e => setName(e.target.value)}
+                                            onKeyDown={EnterPress}
                                         />
                                     </div>
                                 </div>
@@ -403,6 +410,7 @@ const User = () => {
                                         <label htmlFor="InputEmail">Email</label>
                                         <input type="text" className="form-control" id="InputEmail" placeholder="Nhập email" value={email}
                                             onChange={e => setEmail(e.target.value)}
+                                            onKeyDown={EnterPress}
                                         />
                                     </div>
                                 </div>
@@ -584,7 +592,7 @@ const User = () => {
                                             </div>
                                             <label htmlFor="inputIsActive" className="col-sm-2 col-form-label mg-t-10">Trạng Thái</label>
                                                 <div className="col-sm-10 mg-t-10">
-                                                    <input type="checkbox" id="is_active" onChange={(e) => setUserIsActive(e.target.checked)} defaultChecked={user_is_active}/>
+                                                    <input type="checkbox" id="is_active" onClick={(e) => setUserIsActive(e.target.checked)} defaultChecked={user_is_active}/>
                                                 </div>
                                         </div>
                                     </form>

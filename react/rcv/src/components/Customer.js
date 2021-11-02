@@ -116,8 +116,13 @@ const Customer = () => {
             });
     }
 
+    const EnterPress = (e) => {
+        if(e.key === "Enter"){
+            CustomerData()
+        }
+    }
+
     const SubmitCustomer = () => {
-        console.log(customer_is_active);
         axios.post("https://cardbey-dev.tech/api/public/api/customer/action", {
             action: action,
             id: id,
@@ -296,6 +301,7 @@ const Customer = () => {
                                         <label htmlFor="InputName">Tên Khách Hàng</label>
                                         <input type="text" className="form-control" id="InputName" placeholder="Nhập tên sản phẩm" value={name}
                                             onChange={e => setName(e.target.value)} 
+                                            onKeyDown={EnterPress}
                                         />
                                     </div>
                                 </div>
@@ -304,6 +310,7 @@ const Customer = () => {
                                         <label htmlFor="InputEmail">Email</label>
                                         <input type="text" className="form-control" id="InputEmail" placeholder="Nhập email" value={email}
                                             onChange={e => setEmail(e.target.value)} 
+                                            onKeyDown={EnterPress}
                                         />
                                     </div>
                                 </div>
@@ -321,8 +328,9 @@ const Customer = () => {
                                 <div className="col-12 col-md-3">
                                     <div className="form-group">
                                         <label htmlFor="InputAddress">Địa chỉ</label>
-                                        <input type="number" className="form-control" id="InputAddress" placeholder="Nhập địa chỉ" value={address}
+                                        <input type="text" className="form-control" id="InputAddress" placeholder="Nhập địa chỉ" value={address}
                                             onChange={e => setAddress(e.target.value)} 
+                                            onKeyDown={EnterPress}
                                         />
                                     </div>
                                 </div>
@@ -471,7 +479,7 @@ const Customer = () => {
 
                                                 <label htmlFor="inputIsActive" className="col-sm-3 col-form-label mg-t-10">Trạng Thái</label>
                                                 <div className="col-sm-9 mg-t-10">
-                                                    <input type="checkbox" id="is_active" onChange={(e) => setCustomerIsActive(e.target.checked)}  defaultChecked={customer_is_active}
+                                                    <input type="checkbox" id="is_active" onClick={(e) => setCustomerIsActive(e.target.checked)}  defaultChecked={customer_is_active}
                                                     />
                                                 </div>
                                         </div>

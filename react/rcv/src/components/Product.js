@@ -127,6 +127,12 @@ const Product = () => {
         });
     }
 
+    const EnterPress = (e) => {
+        if(e.key === "Enter"){
+            ProductData()
+        }
+    }
+
     const SubmitProduct = () => {
         const dataArray = new FormData();
         dataArray.append("action", action);
@@ -334,6 +340,7 @@ const Product = () => {
                                         <label htmlFor="InputName">Tên sản phẩm </label>
                                         <input type="text" className="form-control" id="InputName" placeholder="Nhập tên sản phẩm" value={name}
                                             onChange={e => setName(e.target.value)}
+                                            onKeyDown={EnterPress}
                                         />
                                     </div>
                                 </div>
@@ -354,6 +361,7 @@ const Product = () => {
                                         <label htmlFor="InputPriceFrom">Giá bán từ</label>
                                         <input type="number" min="0" step="1" className="form-control" id="InputPriceFrom" placeholder="Nhập giá bán từ" value={price_from}
                                             onChange={e => setPriceFrom(e.target.value)}
+                                            onKeyDown={EnterPress}
                                         />
                                     </div>
                                 </div>
@@ -362,6 +370,7 @@ const Product = () => {
                                         <label htmlFor="InputPriceTo">Giá bán tới</label>
                                         <input type="number" min="0" step="1" className="form-control" id="InputPriceTo" placeholder="Nhập giá bán tới" value={price_to}
                                             onChange={e => setPriceTo(e.target.value)}
+                                            onKeyDown={EnterPress}
                                         />
                                     </div>
                                 </div>
@@ -462,7 +471,7 @@ const Product = () => {
                                                 <div className="row">
                                                     <label htmlFor="inputPrice" className="col-sm-2 col-form-label mg-t-10">Giá bán <span className="text-danger"> *</span></label>
                                                     <div className="col-sm-10">
-                                                        <input type="number" step="1" min="0" className="form-control mg-t-10" id="product_price" placeholder="Giá sản phẩm" value={product_detail.product_price} required
+                                                        <input type="number" step="1" min="0" max="999999" maxLength="6" className="form-control mg-t-10" id="product_price" placeholder="Giá sản phẩm" value={product_detail.product_price} required
                                                             {...register("price", {
                                                                 required: 'Giá không được trống!',
                                                                 min: {
@@ -486,7 +495,13 @@ const Product = () => {
                                             
                                             <label htmlFor="inputDescription" className="col-sm-2 col-form-label mg-t-10">Mô tả</label>
                                             <div className="col-sm-10">
-                                                <textarea rows="4" className="form-control mg-t-10" id="description" placeholder="Mô tả sản phẩm" value={product_detail.description}
+                                                <textarea rows="4" maxLength="5000" className="form-control mg-t-10" id="description" placeholder="Mô tả sản phẩm" value={product_detail.description}
+                                                    {...register("description", {
+                                                        max: {
+                                                            value: 5000,
+                                                            message: 'Mô tả không được lớn hơn 5000'
+                                                        }
+                                                    })}
                                                     onChange={e => setProductDetail({
                                                         ...product_detail,
                                                         description: e.target.value,
