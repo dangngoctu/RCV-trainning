@@ -11,7 +11,7 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
 
-    public function JsonExport($code, $msg, $data = null, $optinal = null)
+    public static function JsonExport($code, $msg, $data = null, $optinal = null)
     {
         try {
             $callback = [

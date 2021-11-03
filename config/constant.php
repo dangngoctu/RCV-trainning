@@ -50,6 +50,13 @@ return [
             'email_type' => 'Email không đúng định dạng.',
             'password_required' => 'Mật khẩu không được trống.',
             'password_same' => 'Mật khẩu xác nhận không trùng khớp',
+        ],
+        'login' => [
+            'email_required' => 'Email không được trống.',
+            'email_type' => 'Email không đúng định dạng.',
+            'email_max_255' => 'Email tối đa 255 ký tự.',
+            'password_required' => 'Mật khẩu không được trống.',
+            'password_max_255' => 'Mật khẩu tối đa 255 ký tự.',
         ]
     ]
 ];
