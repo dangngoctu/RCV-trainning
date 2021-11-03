@@ -14,16 +14,18 @@ use Carbon\Carbon;
 
 class LoginController extends Controller
 {
-    public function __construct()
+    /**
+     * Create token, update data to table user
+     * @param json $request request form api
+     * @return json $data
+     */
+    public function apiLogin(Request $request)
     {
-        
-    }
-
-    public function apiLogin(Request $request){
         $rules = [
             'email' => 'required|email|max:255',
             'password' => 'required|max:255'
         ];
+
         $messages = [
             'email.required' => 'Email không được trống.',
             'email.email' => 'Email không đúng định dạng.',
@@ -51,26 +53,27 @@ class LoginController extends Controller
 
                 $userData = auth('api')->user();
                 $data['last_login_at'] = Carbon::now();
-                $clientIP = $_SERVER['HTTP_CLIENT_IP'] 
-                ?? $_SERVER["HTTP_CF_CONNECTING_IP"] 
-                ?? $_SERVER['HTTP_X_FORWARDED'] 
-                ?? $_SERVER['HTTP_X_FORWARDED_FOR'] 
-                ?? $_SERVER['HTTP_FORWARDED'] 
-                ?? $_SERVER['HTTP_FORWARDED_FOR'] 
-                ?? $_SERVER['REMOTE_ADDR'] 
+                $clientIP = $_SERVER['HTTP_CLIENT_IP']
+                ?? $_SERVER["HTTP_CF_CONNECTING_IP"]
+                ?? $_SERVER['HTTP_X_FORWARDED']
+                ?? $_SERVER['HTTP_X_FORWARDED_FOR']
+                ?? $_SERVER['HTTP_FORWARDED']
+                ?? $_SERVER['HTTP_FORWARDED_FOR']
+                ?? $_SERVER['REMOTE_ADDR']
                 ?? '0.0.0.0';
 
                 $data['last_login_ip'] = $clientIP;
                 $data['last_login_at'] = Carbon::now();
 
-                if($request->has('remember_token') && !empty($request->remember_token)){
+                if ($request->has('remember_token') && !empty($request->remember_token)) {
                     $data['remember_token'] = $token;
                 } else {
                     $data['remember_token'] = null;
                 }
 
                 $updateToken = $userData->update($data);
-                if(!$updateToken){
+
+                if (!$updateToken) {
                     return $this->JsonExport(403, 'Invalid Email or Password');
                 }
                 $result = [
@@ -79,7 +82,7 @@ class LoginController extends Controller
                 ];
                 DB::commit();
                 return $this->JsonExport(200, 'Thành công', $result);
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 DB::rollback();
                 Log::error($e);
                 return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
@@ -87,12 +90,17 @@ class LoginController extends Controller
         }
     }
 
-    public function apiLogout(Request $request){
-        
-        try{
-            if($request->header('Authorization')){
+    /**
+     * Remove token
+     * @param json $request request form api
+     * @return string $result
+     */
+    public function apiLogout(Request $request)
+    {
+        try {
+            if ($request->header('Authorization')) {
                 $logout = JWTAuth::invalidate($request->header('Authorization'));
-                if($logout){
+                if ($logout) {
                     return $this->JsonExport(200, 'Thành công');
                 } else {
                     return $this->JsonExport(403, 'Token invalid');
@@ -100,10 +108,9 @@ class LoginController extends Controller
             } else {
                 return $this->JsonExport(403, 'Token invalid');
             }
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             Log::error($e);
             return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
         }
-        
     }
 }

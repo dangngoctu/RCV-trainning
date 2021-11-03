@@ -14,40 +14,47 @@ use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
-    public function __construct()
+    /**
+     * get data in table mst_user follow filter
+     * @param json $request request from api
+     * @return json $result
+     */
+    public function apiUserList(Request $request)
     {
-        
-    }
-    
-    public function apiUserList(Request $request){
         try {
             $data = Models\MstUser::where('is_delete', 0);
 
-            if(!empty($request->name) && $request->has('name')){
+            if (!empty($request->name) && $request->has('name')) {
                 $data = $data->where('name', 'LIKE', '%'.$request->name.'%');
             }
 
-            if(!empty($request->email) && $request->has('email')){
+            if (!empty($request->email) && $request->has('email')) {
                 $data = $data->where('email', 'LIKE', '%'.$request->email.'%');
             }
 
-            if(!empty($request->group_role) && $request->has('group_role')){
+            if (!empty($request->group_role) && $request->has('group_role')) {
                 $data = $data->where('group_role', $request->group_role);
             }
 
-            if($request->has('is_active') && $request->is_active != ""){
+            if ($request->has('is_active') && $request->is_active != "") {
                 $data = $data->where('is_active', $request->is_active);
             }
 
             $data = $data->select('id', 'name', 'email', 'group_role', 'is_active', 'is_delete')->get();
             return $this->JsonExport(200, 'Thành công', $data);
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             Log::error($e);
             return $this->JsonExport(200, 'Thành công', []);
         }
     }
 
-    public function apiUserDetail(Request $request){
+    /**
+     * get data detail of user
+     * @param json $request id of user
+     * @return json $result
+     */
+    public function apiUserDetail(Request $request)
+    {
         $rules = [
             'id' => 'required|digits_between:1,10'
         ];
@@ -55,35 +62,41 @@ class UserController extends Controller
         if ($validator->fails()) {
             return $this->JsonExport(403, $validator->errors()->first());
         } else {
-            try{
+            try {
                 $data = Models\MstUser::where('id', $request->id)->first();
-                if($data){
+                if ($data) {
                     return $this->JsonExport(200, 'Thành công', $data);
                 } else {
                     return $this->JsonExport(403, 'Người dùng không hợp lệ');
                 }
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 Log::error($e);
                 return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
             }
         }
     }
 
-    public function apiUserAction(Request $request){
+    /**
+     * CRUD user
+     * @param json $request from api
+     * @return json $result
+     */
+    public function apiUserAction(Request $request)
+    {
         $rules = [
             'action' => 'required|in:update,create,delete,disable'
         ];
 
-        if($request->action != 'create') {
+        if ($request->action != 'create') {
             $rules['id'] = 'required|digits_between:1,10';
-        } 
+        }
 
-        if($request->action === 'create' || $request->action === 'update'){
+        if ($request->action === 'create' || $request->action === 'update') {
             $rules['name'] = 'required|max:255';
             $rules['group_role'] = 'required';
-            if($request->action === "update"){
+            if ($request->action === "update") {
                 $rules['email'] = 'required|max:255|email';
-                if($request->has('password') && !empty($request->password)){
+                if ($request->has('password') && !empty($request->password)) {
                     $rules['password'] = 'same:re_password';
                 }
             } else {
@@ -113,24 +126,25 @@ class UserController extends Controller
                 DB::beginTransaction();
                 $data = [];
                 if ($request->action === 'update' || $request->action === 'create') {
-                    if($request->has('name') && !empty($request->name)){
+                    if ($request->has('name') && !empty($request->name)) {
                         $data['name'] = $request->name;
                     }
 
-                    if($request->has('group_role') && !empty($request->group_role)){
+                    if ($request->has('group_role') && !empty($request->group_role)) {
                         $data['group_role'] = $request->group_role;
                     }
 
-                    if($request->has('password') && !empty($request->password)){
+                    if ($request->has('password') && !empty($request->password)) {
                         $data['password'] = Hash::make($request->password);
                     } else {
                         if ($request->action === 'create') {
-                            $data['password'] = config('constant.default_password')?Hash::make(config('constant.default_password')):Hash::make(123456);
+                            $data['password'] = config('constant.default_password')?
+                            Hash::make(config('constant.default_password')):Hash::make(123456);
                         }
                     }
 
-                    if($request->has('is_active')){
-                        if($request->is_active === true){
+                    if ($request->has('is_active')) {
+                        if ($request->is_active === true) {
                             $data['is_active'] = 1;
                         } else {
                             $data['is_active'] = 0;
@@ -139,17 +153,18 @@ class UserController extends Controller
                         $data['is_active'] = 0;
                     }
 
-                    if($request->action === 'create') {
+                    if ($request->action === 'create') {
                         $checkUser = Models\MstUser::where('email', $request->email)->first();
-                        if($checkUser){
+                        if ($checkUser) {
                             return $this->JsonExport(403, 'Email không được trùng.');
                         }
                         $data['email'] = $request->email;
                         $data['remember_token'] = null;
                         $action = Models\MstUser::create($data);
                     } else {
-                        $checkUser = Models\MstUser::where('email', $request->email)->where('id', '!=', $request->id)->first();
-                        if($checkUser){
+                        $checkUser = Models\MstUser::where('email', $request->email)
+                                    ->where('id', '!=', $request->id)->first();
+                        if ($checkUser) {
                             return $this->JsonExport(403, 'Email không được trùng.');
                         }
 
@@ -157,14 +172,14 @@ class UserController extends Controller
                     }
                 } else {
                     $user = Models\MstUser::where('id', $request->id)->first();
-                    if(!$user){
+                    if (!$user) {
                         return $this->JsonExport(403, 'Người dùng không hợp lệ');
                     }
 
-                    if($request->action === 'delete'){
+                    if ($request->action === 'delete') {
                         $data['is_delete'] = 1;
                     } else {
-                        if($user->is_active == 1){
+                        if ($user->is_active == 1) {
                             $data['is_active'] = 0;
                         } else {
                             $data['is_active'] = 1;
@@ -172,14 +187,14 @@ class UserController extends Controller
                     }
                     $action = $user->update($data);
                 }
-                if($action){
+                if ($action) {
                     DB::commit();
                     return $this->JsonExport(200, 'Thành công');
                 } else {
                     DB::rollback();
                     return $this->JsonExport(403, 'Vui lòng kiểm tra lại dữ liệu.');
                 }
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 DB::rollback();
                 Log::error($e);
                 return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');

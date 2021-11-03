@@ -11,7 +11,6 @@ $factory->define(Models\MstCustomer::class, function (Faker $faker) {
         'email' => $faker->unique()->safeEmail,
         'tel_num' => $faker->regexify('09[0-9]{9}'),
         'address' => $faker->streetAddress,
-        'is_active' => 1,
         'is_active' => rand(0,1),
     ];
 });

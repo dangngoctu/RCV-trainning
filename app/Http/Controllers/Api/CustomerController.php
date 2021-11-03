@@ -17,40 +17,47 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class CustomerController extends Controller
 {
-    public function __construct()
+    /**
+     * get data in table mst_customer follow on filter
+     * @param json $request from api
+     * @return json $result
+     */
+    public function apiCustomerList(Request $request)
     {
-
-    }
-
-    public function apiCustomerList(Request $request){
         try {
             $data = new Models\MstCustomer;
 
-            if(!empty($request->customer_name) && $request->has('customer_name')){
+            if (!empty($request->customer_name) && $request->has('customer_name')) {
                 $data = $data->where('customer_name', 'LIKE', '%'.$request->customer_name.'%');
             }
 
-            if(!empty($request->email) && $request->has('email')){
+            if (!empty($request->email) && $request->has('email')) {
                 $data = $data->where('email', 'LIKE', '%'.$request->email.'%');
             }
 
-            if(!empty($request->address) && $request->has('address')){
+            if (!empty($request->address) && $request->has('address')) {
                 $data = $data->where('address', 'LIKE', '%'.$request->address.'%');
             }
 
-            if($request->has('is_active') && $request->is_active != ""){
+            if ($request->has('is_active') && $request->is_active != "") {
                 $data = $data->where('is_active', $request->is_active);
             }
 
             $data = $data->select('customer_id', 'customer_name', 'email', 'tel_num', 'address', 'is_active')->get();
             return $this->JsonExport(200, 'Thành công', $data);
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             Log::error($e);
             return $this->JsonExport(200, 'Thành công', []);
         }
     }
 
-    public function apiCustomerDetail(Request $request){
+    /**
+     * get data detail of customer
+     * @param json $request from api
+     * @return json $result
+     */
+    public function apiCustomerDetail(Request $request)
+    {
         $rules = [
             'id' => 'required|digits_between:1,10'
         ];
@@ -58,28 +65,34 @@ class CustomerController extends Controller
         if ($validator->fails()) {
             return $this->JsonExport(403, $validator->errors()->first());
         } else {
-            try{
+            try {
                 $data = Models\MstCustomer::where('customer_id', $request->id)->first();
-                if($data){
+                if ($data) {
                     return $this->JsonExport(200, 'Thành công', $data);
                 } else {
                     return $this->JsonExport(403, 'Khách hàng không hợp lệ');
                 }
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 Log::error($e);
                 return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
             }
         }
     }
 
-    public function apiCustomerAction(Request $request){
+    /**
+     * CRUD customer
+     * @param json $request from api
+     * @return json $result
+     */
+    public function apiCustomerAction(Request $request)
+    {
         $rules = [
             'action' => 'required|in:update,create',
             'customer_name' => 'required|max:255|min:5',
             'tel_num' => 'required|max:14|regex:/^([0-9\s\-\+\(\)]*)$/',
             'address' => 'required|max:255',
         ];
-        if($request->action === "update"){
+        if ($request->action === "update") {
             $rules['id'] = 'required|digits_between:1,10';
             $rules['email'] = 'required|max:255|email';
         } else {
@@ -110,24 +123,24 @@ class CustomerController extends Controller
             try {
                 DB::beginTransaction();
                 $data = [];
-                if(!empty($request->customer_name) && $request->has('customer_name')){
+                if (!empty($request->customer_name) && $request->has('customer_name')) {
                     $data['customer_name'] = $request->customer_name;
                 }
 
-                if(!empty($request->email) && $request->has('email')){
+                if (!empty($request->email) && $request->has('email')) {
                     $data['email'] = $request->email;
                 }
 
-                if(!empty($request->address) && $request->has('address')){
+                if (!empty($request->address) && $request->has('address')) {
                     $data['address'] = $request->address;
                 }
 
-                if(!empty($request->tel_num) && $request->has('tel_num')){
+                if (!empty($request->tel_num) && $request->has('tel_num')) {
                     $data['tel_num'] = trim($request->tel_num);
                 }
 
-                if(!empty($request->is_active) && $request->has('is_active')){
-                    if($request->is_active === true){
+                if (!empty($request->is_active) && $request->has('is_active')) {
+                    if ($request->is_active === true) {
                         $data['is_active'] = 1;
                     } else {
                         $data['is_active'] = 0;
@@ -136,34 +149,35 @@ class CustomerController extends Controller
                     $data['is_active'] = 0;
                 }
 
-                if($request->action === 'create'){
+                if ($request->action === 'create') {
                     $checkMail = Models\MstCustomer::where('email', $request->email)->first();
-                    if($checkMail){
+                    if ($checkMail) {
                         return $this->JsonExport(403, 'Email đã tồn tại');
                     }
 
                     $action = Models\MstCustomer::create($data);
                 } else {
-                    $checkMail = Models\MstCustomer::where('email', $request->email)->where('customer_id', '!=', $request->id)->first();
-                    if($checkMail){
+                    $checkMail = Models\MstCustomer::where('email', $request->email)
+                                ->where('customer_id', '!=', $request->id)->first();
+                    if ($checkMail) {
                         return $this->JsonExport(403, 'Email đã tồn tại');
                     }
 
                     $customer = Models\MstCustomer::where('customer_id', $request->id)->first();
-                    if($customer){
+                    if ($customer) {
                         $action = $customer->update($data);
                     } else {
                         return $this->JsonExport(403, 'Khách hàng không hợp lệ');
                     }
                 }
-                if($action){
+                if ($action) {
                     DB::commit();
                     return $this->JsonExport(200, 'Thành công');
                 } else {
                     DB::rollback();
                     return $this->JsonExport(403, 'Vui lòng kiểm tra lại dữ liệu.');
                 }
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 DB::rollback();
                 Log::error($e);
                 return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
@@ -171,7 +185,13 @@ class CustomerController extends Controller
         }
     }
 
-    public function apiCustomerImport(Request $request){
+    /**
+     * import customer
+     * @param json $request from api
+     * @return json $result
+     */
+    public function apiCustomerImport(Request $request)
+    {
         $rules = [
             'import_file' => 'required|mimes:xlsx,xls',
         ];
@@ -186,51 +206,58 @@ class CustomerController extends Controller
             try {
                 $import = new CustomersImport();
                 Excel::import($import, $request->import_file);
-                if(count($import->getErrorRow()) > 0){
-                    return $this->JsonExport(200, 'row '.implode( ',', $import->getErrorRow()). ' is error');
+                if (count($import->getErrorRow()) > 0) {
+                    return $this->JsonExport(200, 'row '.implode(',', $import->getErrorRow()). ' is error');
                 } else {
                     return $this->JsonExport(200, 'Thành công');
                 }
-            } catch (\Exception $e){
+            } catch (\Exception $e) {
                 Log::error($e);
                 return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
             }
         }
     }
 
-    public function apiCustomerExport(Request $request){
+    /**
+     * export customer
+     * @param json $request from api
+     * @return json $result
+     */
+    public function apiCustomerExport(Request $request)
+    {
         try {
             $data = new Models\MstCustomer;
             $is_filter = false;
 
-            if(!empty($request->customer_name) && $request->has('customer_name')){
+            if (!empty($request->customer_name) && $request->has('customer_name')) {
                 $data = $data->where('customer_name', 'LIKE', '%'.$request->customer_name.'%');
                 $is_filter = true;
             }
 
-            if(!empty($request->email) && $request->has('email')){
+            if (!empty($request->email) && $request->has('email')) {
                 $data = $data->where('email', 'LIKE', '%'.$request->name.'%');
                 $is_filter = true;
             }
 
-            if(!empty($request->address) && $request->has('address')){
+            if (!empty($request->address) && $request->has('address')) {
                 $data = $data->where('address', 'LIKE', '%'.$request->address.'%');
                 $is_filter = true;
             }
 
-            if(!empty($request->is_active) && $request->has('is_active')){
+            if (!empty($request->is_active) && $request->has('is_active')) {
                 $data = $data->where('is_active', $request->is_active);
                 $is_filter = true;
             }
 
-            if($is_filter === true){
+            if ($is_filter === true) {
                 $data = $data->get();
             } else {
                 $data = $data->take(10)->get();
             }
            
-            return Excel::download(new CustomersExport($data), 'CustomersExport-'.Carbon::now()->format('Y-m-d').'.xlsx');
-        } catch (\Exception $e){
+            return Excel::download(new CustomersExport($data), 'CustomersExport-'.Carbon::now()
+                    ->format('Y-m-d').'.xlsx');
+        } catch (\Exception $e) {
             Log::error($e);
             return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
         }
