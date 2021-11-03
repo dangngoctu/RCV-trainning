@@ -8,7 +8,7 @@ import { useHistory } from "react-router-dom";
 const Header = () => {
 	let history = useHistory();
 	const HandleLogout = () => {
-		axios.post("https://cardbey-dev.tech/api/public/api/logout", {
+		axios.post("http://training.uk/api/logout", {
 
 		},
 			{

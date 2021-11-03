@@ -12,9 +12,15 @@ use Illuminate\Support\Facades\DB;
 use App\Imports\CustomersImport;
 use App\Exports\CustomersExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Repositories\CustomerRepository;
 
 class CustomerController extends Controller
 {
+    public function __construct(CustomerRepository $customerRepository)
+    {
+        $this->customerRepository = $customerRepository;
+    }
+
     /**
      * get data in table mst_customer follow on filter
      * @param json $request from api
@@ -23,25 +29,7 @@ class CustomerController extends Controller
     public function apiCustomerList(Request $request)
     {
         try {
-            $data = new Models\MstCustomer;
-
-            if (!empty($request->customer_name) && $request->has('customer_name')) {
-                $data = $data->where('customer_name', 'LIKE', '%'.$request->customer_name.'%');
-            }
-
-            if (!empty($request->email) && $request->has('email')) {
-                $data = $data->where('email', 'LIKE', '%'.$request->email.'%');
-            }
-
-            if (!empty($request->address) && $request->has('address')) {
-                $data = $data->where('address', 'LIKE', '%'.$request->address.'%');
-            }
-
-            if ($request->has('is_active') && $request->is_active != "") {
-                $data = $data->where('is_active', $request->is_active);
-            }
-
-            $data = $data->select('customer_id', 'customer_name', 'email', 'tel_num', 'address', 'is_active')->get();
+            $data = $this->customerRepository->getListCustomer($request, false);
             return $this->JsonExport(200, config('constant.success'), $data);
         } catch (\Exception $e) {
             Log::error($e);
@@ -64,7 +52,7 @@ class CustomerController extends Controller
             return $this->JsonExport(403, $validator->errors()->first());
         } else {
             try {
-                $data = Models\MstCustomer::where('customer_id', $request->id)->first();
+                $data = $this->customerRepository->getCustomerDetail($request->id);
                 if ($data) {
                     return $this->JsonExport(200, config('constant.success'), $data);
                 } else {
@@ -117,7 +105,7 @@ class CustomerController extends Controller
         if ($validator->fails()) {
             return $this->JsonExport(403, $validator->errors()->first());
         } else {
-            try {
+            // try {
                 DB::beginTransaction();
                 $data = [];
                 if (!empty($request->customer_name) && $request->has('customer_name')) {
@@ -147,22 +135,21 @@ class CustomerController extends Controller
                 }
 
                 if ($request->action === 'create') {
-                    $checkMail = Models\MstCustomer::where('email', $request->email)->first();
+                    $checkMail = $this->customerRepository->getCustomerMailExist($request->email, null);
                     if ($checkMail) {
                         return $this->JsonExport(403, config('constant.email_exist'));
                     }
 
-                    $action = Models\MstCustomer::create($data);
+                    $action = $this->customerRepository->createCustomer($data);
                 } else {
-                    $checkMail = Models\MstCustomer::where('email', $request->email)
-                                ->where('customer_id', '!=', $request->id)->first();
+                    $checkMail =  $this->customerRepository->getCustomerMailExist($request->email, $request->id);
                     if ($checkMail) {
                         return $this->JsonExport(403, config('constant.email_exist'));
                     }
 
-                    $customer = Models\MstCustomer::where('customer_id', $request->id)->first();
+                    $customer = $this->customerRepository->getCustomerDetail($request->id);
                     if ($customer) {
-                        $action = $customer->update($data);
+                        $action = $this->customerRepository->updateCustomer($request->id, $data);
                     } else {
                         return $this->JsonExport(403, config('constant.error_403'));
                     }
@@ -174,11 +161,11 @@ class CustomerController extends Controller
                     DB::rollback();
                     return $this->JsonExport(403, config('constant.error_403'));
                 }
-            } catch (\Exception $e) {
-                DB::rollback();
-                Log::error($e);
-                return $this->JsonExport(500, config('constant.error_500'));
-            }
+            // } catch (\Exception $e) {
+            //     DB::rollback();
+            //     Log::error($e);
+            //     return $this->JsonExport(500, config('constant.error_500'));
+            // }
         }
     }
 
@@ -223,35 +210,7 @@ class CustomerController extends Controller
     public function apiCustomerExport(Request $request)
     {
         try {
-            $data = new Models\MstCustomer;
-            $is_filter = false;
-
-            if (!empty($request->customer_name) && $request->has('customer_name')) {
-                $data = $data->where('customer_name', 'LIKE', '%'.$request->customer_name.'%');
-                $is_filter = true;
-            }
-
-            if (!empty($request->email) && $request->has('email')) {
-                $data = $data->where('email', 'LIKE', '%'.$request->name.'%');
-                $is_filter = true;
-            }
-
-            if (!empty($request->address) && $request->has('address')) {
-                $data = $data->where('address', 'LIKE', '%'.$request->address.'%');
-                $is_filter = true;
-            }
-
-            if (!empty($request->is_active) && $request->has('is_active')) {
-                $data = $data->where('is_active', $request->is_active);
-                $is_filter = true;
-            }
-
-            if ($is_filter === true) {
-                $data = $data->get();
-            } else {
-                $data = $data->take(10)->get();
-            }
-           
+            $data = $this->customerRepository->getListCustomer($request, true);
             return Excel::download(new CustomersExport($data), 'CustomersExport-'.Carbon::now()
                     ->format('Y-m-d').'.xlsx');
         } catch (\Exception $e) {

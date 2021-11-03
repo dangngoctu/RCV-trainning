@@ -11,9 +11,15 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 use Yajra\Datatables\Datatables;
+use App\Repositories\ProductRepository;
 
 class ProductController extends Controller
 {
+    public function __construct(ProductRepository $productRepository)
+    {
+        $this->productRepository = $productRepository;
+    }
+    
     /**
      * get data in table mst_product follow on filter
      * @param json $request from api
@@ -22,24 +28,7 @@ class ProductController extends Controller
     public function apiProductList(Request $request)
     {
         try {
-            $data = new Models\MstProduct;
-            if (!empty($request->name) && $request->has('name')) {
-                $data = $data->where('product_name', 'LIKE', '%'.$request->name.'%');
-            }
-
-            if (!empty($request->is_sales) && $request->has('is_sales')) {
-                $data = $data->where('is_sales', $request->is_sales);
-            }
-
-            if (!empty($request->price_from) && $request->has('price_from')) {
-                $data = $data->where('product_price', '>=', $request->price_from);
-            }
-
-            if (!empty($request->price_to) && $request->has('price_to')) {
-                $data = $data->where('product_price', '<=', $request->price_to);
-            }
-
-            $data = $data->select('product_id', 'product_name', 'product_price', 'is_sales', 'description');
+            $data = $this->productRepository->getListProduct($request);
             $data = Datatables::of($data)
                     ->addColumn('is_sales_show', function ($v) {
                         if ($v->is_sales == 1) {
@@ -82,7 +71,7 @@ class ProductController extends Controller
             return $this->JsonExport(403, $validator->errors()->first());
         } else {
             try {
-                $data = Models\MstProduct::where('product_id', $request->id)->first();
+                $data = $this->productRepository->getProductDetail($request->id);
                 if ($data) {
                     return $this->JsonExport(200, config('constant.success'), $data);
                 } else {
@@ -106,6 +95,7 @@ class ProductController extends Controller
             'action' => 'required|in:update,create,delete',
             'product_name' => 'required|max:255|min:5',
             'product_price' => 'required|min:0|integer',
+            'description' => 'max:4999',
             'file' => 'max:2048',
             'is_sales' => 'required|in:0,1,2',
         ];
@@ -170,8 +160,7 @@ class ProductController extends Controller
                     }
 
                     if ($request->action === 'create') {
-                        $last_request = Models\MstProduct::where('product_id', 'like', '%'.$request->product_name[0].'%')
-                                        ->orderBy('product_id', 'desc')->first();
+                        $last_request = $this->productRepository->getRequestLatestFirstChar($request->product_name);
                         if ($last_request) {
                             $newId = (int)substr($last_request->product_id, 1)+1;
                         } else {
@@ -180,12 +169,12 @@ class ProductController extends Controller
 
                         $newId = str_pad($newId, 9, "0", STR_PAD_LEFT);
                         $data['product_id'] = $request->product_name[0].$newId;
-                        $action = Models\MstProduct::create($data);
+                        $action = $this->productRepository->createProduct($data);
                         if ($request->has('file') && !empty($request->file) && $request->file != 'undefined') {
                             $request->file->move($dir_file, $product_image);
                         }
                     } else {
-                        $product = Models\MstProduct::where('product_id', $request->id)->first();
+                        $product = $this->productRepository->getProductDetail($request->id);
                         if ($product) {
                             if ($request->has('file') && !empty($request->file) && $request->file != 'undefined') {
                                 if (!empty($product->product_image) && !empty($request->file) && $request->file != 'undefined') {
@@ -193,20 +182,20 @@ class ProductController extends Controller
                                 }
                                 $request->file->move($dir_file, $product_image);
                             }
-                            $action = $product->update($data);
+                            $action = $this->productRepository->updateProduct($request->id, $data);
                         } else {
                             DB::rollback();
                             return $this->JsonExport(403, config('constant.error_403'));
                         }
                     }
                 } else {
-                    $product = Models\MstProduct::where('product_id', $request->id)->first();
+                    $product = $this->productRepository->getProductDetail($request->id);
 
                     if ($product) {
                         if (!empty($product->product_image)) {
                             @unlink(public_path('/img/product/'. $product->product_image));
                         }
-                        $action = $product->delete();
+                        $action = $this->productRepository->deleteProduct($request->id);
                     } else {
                         DB::rollback();
                         return $this->JsonExport(403, config('constant.error_403'));

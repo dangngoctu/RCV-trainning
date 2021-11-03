@@ -92,7 +92,7 @@ const Product = () => {
     }, [dataSearch]);
 
     const ProductData = () => {
-        axios.post("https://cardbey-dev.tech/api/public/api/product", {
+        axios.post("http://training.uk/api/product", {
             name: name,
             is_sales: is_sales,
             price_from: price_from,
@@ -146,7 +146,7 @@ const Product = () => {
         // dataArray.append("product_price", product_price);
         // dataArray.append("description", description);
         dataArray.append("file", uploadFile);
-        axios.post("https://cardbey-dev.tech/api/public/api/product/action", dataArray,
+        axios.post("http://training.uk/api/product/action", dataArray,
             {
                 headers: {
                     "Content-Type": "multipart/form-data",
@@ -218,7 +218,7 @@ const Product = () => {
         setId(product_id);
         window.$('#modalProduct .modal-title').html('Cập nhật sản phẩm');
         setAction('update');
-        axios.post("https://cardbey-dev.tech/api/public/api/product/detail", {
+        axios.post("http://training.uk/api/product/detail", {
             id: product_id
         },
         {
@@ -241,7 +241,7 @@ const Product = () => {
                     description: response.data.data.description,
                 });
                 if(response.data.data.product_image){
-                    window.$('#product_image').prop('src', 'https://cardbey-dev.tech/api/public/img/product/'+response.data.data.product_image);
+                    window.$('#product_image').prop('src', 'http://training.uk/img/product/'+response.data.data.product_image);
                 } else {
                     window.$('#product_image').prop('src', '');
                 }
@@ -279,7 +279,7 @@ const Product = () => {
             cancelButtonText: 'Huỷ'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.post("https://cardbey-dev.tech/api/public/api/product/action", {
+                axios.post("http://training.uk/api/product/action", {
                     action: 'delete',
                     id: product_id,
                 },
@@ -420,7 +420,7 @@ const Product = () => {
                                                 <div className="row">
                                                     <label htmlFor="inputName" className="col-sm-2 col-form-label">Tên sản phẩm<span className="text-danger"> *</span></label>
                                                     <div className="col-sm-10">
-                                                        <input type="text" className="form-control" id="product_name" placeholder="Tên sản phẩm" required value={product_detail.product_name}
+                                                        <input type="text" autoFocus className="form-control" id="product_name" placeholder="Tên sản phẩm" required autoFocus value={product_detail.product_name}
                                                             {...register("name", {
                                                                 required: 'Tên không được trống!',
                                                                 minLength: {

@@ -4,14 +4,19 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models;
 use Validator;
 use Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
+use App\Repositories\UserRepository;
 
 class UserController extends Controller
 {
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
+
     /**
      * get data in table mst_user follow filter
      * @param json $request request from api
@@ -20,25 +25,7 @@ class UserController extends Controller
     public function apiUserList(Request $request)
     {
         try {
-            $data = Models\MstUser::where('is_delete', 0);
-
-            if (!empty($request->name) && $request->has('name')) {
-                $data = $data->where('name', 'LIKE', '%'.$request->name.'%');
-            }
-
-            if (!empty($request->email) && $request->has('email')) {
-                $data = $data->where('email', 'LIKE', '%'.$request->email.'%');
-            }
-
-            if (!empty($request->group_role) && $request->has('group_role')) {
-                $data = $data->where('group_role', $request->group_role);
-            }
-
-            if ($request->has('is_active') && $request->is_active != "") {
-                $data = $data->where('is_active', $request->is_active);
-            }
-
-            $data = $data->select('id', 'name', 'email', 'group_role', 'is_active', 'is_delete')->get();
+            $data = $this->userRepository->getListUser($request);
             return $this->JsonExport(200, config('constant.success'), $data);
         } catch (\Exception $e) {
             Log::error($e);
@@ -61,7 +48,7 @@ class UserController extends Controller
             return $this->JsonExport(403, $validator->errors()->first());
         } else {
             try {
-                $data = Models\MstUser::where('id', $request->id)->first();
+                $data = $this->userRepository->getUserDetail($request->id);
                 if ($data) {
                     return $this->JsonExport(200, config('constant.success'), $data);
                 } else {
@@ -154,24 +141,23 @@ class UserController extends Controller
                     }
 
                     if ($request->action === 'create') {
-                        $checkUser = Models\MstUser::where('email', $request->email)->first();
+                        $checkUser = $this->userRepository->getUserMail($request->email, null);
                         if ($checkUser) {
                             return $this->JsonExport(403, config('constant.email_exist'));
                         }
                         $data['email'] = $request->email;
                         $data['remember_token'] = null;
-                        $action = Models\MstUser::create($data);
+                        $action = $this->userRepository->createUser($data);
                     } else {
-                        $checkUser = Models\MstUser::where('email', $request->email)
-                                    ->where('id', '!=', $request->id)->first();
+                        $checkUser = $this->userRepository->getUserMail($request->email, $request->id);
                         if ($checkUser) {
                             return $this->JsonExport(403, config('constant.email_exist'));
                         }
 
-                        $action = Models\MstUser::where('id', $request->id)->update($data);
+                        $action = $this->userRepository->updateUser($request->id, $data);
                     }
                 } else {
-                    $user = Models\MstUser::where('id', $request->id)->first();
+                    $user = $this->userRepository->getUserDetail($request->id);
                     if (!$user) {
                         return $this->JsonExport(403, config('constant.error_403'));
                     }
@@ -185,7 +171,8 @@ class UserController extends Controller
                             $data['is_active'] = 1;
                         }
                     }
-                    $action = $user->update($data);
+
+                    $action = $this->userRepository->updateUser($request->id, $data);
                 }
                 if ($action) {
                     DB::commit();

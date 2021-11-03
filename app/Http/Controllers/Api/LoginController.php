@@ -12,9 +12,14 @@ use Validator;
 use Illuminate\Support\Facades\Log;
 use Carbon\Carbon;
 use App\Http\Requests\LoginRequest;
+use App\Repositories\UserRepository;
 
 class LoginController extends Controller
 {
+    public function __construct(UserRepository $userRepository)
+    {
+        $this->userRepository = $userRepository;
+    }
     /**
      * Create token, update data to table user
      * @param json $request request form api
@@ -22,7 +27,7 @@ class LoginController extends Controller
      */
     public function apiLogin(LoginRequest $request)
     {
-        try {
+        // try {
             DB::beginTransaction();
             $data = [];
             $credentials = [
@@ -49,7 +54,8 @@ class LoginController extends Controller
                 $data['remember_token'] = null;
             }
 
-            $updateToken = $userData->update($data);
+            // $updateToken = $userData->update($data);
+            $updateToken = $this->userRepository->updateUser($userData->id, $data);
 
             if (!$updateToken) {
                 return $this->JsonExport(403, config('constant.login_403'));
@@ -60,11 +66,11 @@ class LoginController extends Controller
             ];
             DB::commit();
             return $this->JsonExport(200, config('constant.success'), $result);
-        } catch (\Exception $e) {
-            DB::rollback();
-            Log::error($e);
-            return $this->JsonExport(500, config('constant.error_500'));
-        }
+        // } catch (\Exception $e) {
+        //     DB::rollback();
+        //     Log::error($e);
+        //     return $this->JsonExport(500, config('constant.error_500'));
+        // }
     }
 
     /**

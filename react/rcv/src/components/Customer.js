@@ -81,7 +81,7 @@ const Customer = () => {
     }, [dataSearch]);
 
     const CustomerData = () => {
-        axios.post("https://cardbey-dev.tech/api/public/api/customer", {
+        axios.post("http://training.uk/api/customer", {
             customer_name: name,
             is_active: is_active,
             email: email,
@@ -123,7 +123,7 @@ const Customer = () => {
     }
 
     const SubmitCustomer = () => {
-        axios.post("https://cardbey-dev.tech/api/public/api/customer/action", {
+        axios.post("http://training.uk/api/customer/action", {
             action: action,
             id: id,
             customer_name: customer_name,
@@ -196,7 +196,7 @@ const Customer = () => {
     }
 
     const ExportCustomer = () => {
-        fetch("https://cardbey-dev.tech/api/public/api/customer/export", {
+        fetch("http://training.uk/api/customer/export", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -244,7 +244,7 @@ const Customer = () => {
         setAction('update');
         setId(customer_id);
         window.$('#modalCustomer .modal-title').html('Cập nhật khách hàng');
-        axios.post("https://cardbey-dev.tech/api/public/api/customer/detail", {
+        axios.post("http://training.uk/api/customer/detail", {
             id: customer_id
         },{
         headers: {
@@ -384,7 +384,7 @@ const Customer = () => {
                                         <div className="form-group row">
                                                 <label htmlFor="inputName" className="col-sm-3 col-form-label">Tên khách hàng<span className="text-danger"> *</span></label>
                                                 <div className="col-sm-9">
-                                                    <input type="text" className="form-control" id="customer_name" placeholder="Tên khách hàng" required
+                                                    <input autoFocus type="text" className="form-control" id="customer_name" placeholder="Tên khách hàng" required
                                                         value = {customer_name}
                                                         {...register("name", {
                                                             required: 'Tên không được trống!',

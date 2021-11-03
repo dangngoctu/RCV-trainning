@@ -106,7 +106,7 @@ const User = () => {
     }, [dataSearch, action]);
 
     const UserData = () => {
-        axios.post("https://cardbey-dev.tech/api/public/api/user", {
+        axios.post("http://training.uk/api/user", {
             name: window.$('#FormSearch #InputName').val(),
             email: window.$('#FormSearch #InputEmail').val(),
             group_role: window.$('#FormSearch #InputGroupRole').val(),
@@ -149,7 +149,7 @@ const User = () => {
     }
 
     const SubmitUser = () => {
-        axios.post("https://cardbey-dev.tech/api/public/api/user/action", {
+        axios.post("http://training.uk/api/user/action", {
             action: action,
             id: id,
             name: user_name,
@@ -218,7 +218,7 @@ const User = () => {
             cancelButtonText: 'Huỷ'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.post("https://cardbey-dev.tech/api/public/api/user/action", {
+                axios.post("http://training.uk/api/user/action", {
                     action: 'delete',
                     id: userId,
                 },
@@ -278,7 +278,7 @@ const User = () => {
             cancelButtonText: 'Huỷ'
         }).then((result) => {
             if (result.isConfirmed) {
-                axios.post("https://cardbey-dev.tech/api/public/api/user/action", {
+                axios.post("http://training.uk/api/user/action", {
                     action: 'disable',
                     id: userId,
                 },
@@ -340,7 +340,7 @@ const User = () => {
         ClearModal('update');
         setId(customer_id);
         window.$('#modalUser .modal-title').html('Cập nhật nhân viên');
-        axios.post("https://cardbey-dev.tech/api/public/api/user/detail", {
+        axios.post("http://training.uk/api/user/detail", {
             id: customer_id
         },{
         headers: {
@@ -479,7 +479,7 @@ const User = () => {
                                         <div className="form-group row">
                                             <label htmlFor="inputName" className="col-sm-2 col-form-label">Họ tên <span className="text-danger"> *</span></label>
                                             <div className="col-sm-10">
-                                                <input type="text" className="form-control" id="name" placeholder="Tên" value={user_name}
+                                                <input autoFocus type="text" className="form-control" id="name" placeholder="Tên" value={user_name}
                                                     {...register("name", {
                                                         required: 'Tên không được trống!',
                                                         minLength: {

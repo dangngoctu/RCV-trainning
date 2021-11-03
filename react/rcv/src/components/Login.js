@@ -19,7 +19,7 @@ const Login = () => {
     let history = useHistory();
 
     const HandleLogin = () => {
-        axios.post("https://cardbey-dev.tech/api/public/api/login", {
+        axios.post("http://training.uk/api/login", {
             email: email,
             password: password,
             remember_token: remember_token
@@ -43,6 +43,12 @@ const Login = () => {
         });
     }
 
+    const EnterPress = (e) => {
+        if(e.key === "Enter"){
+            handleSubmit(HandleLogin())
+        }
+    }
+
     return (
         <div>
             <div className="login-page">
@@ -55,7 +61,7 @@ const Login = () => {
                         <div className="card-body login-card-body">
                             <form>
                                 <div className="input-group mb-3">
-                                    <input type="email" className="form-control" placeholder="Email"
+                                    <input autoFocus type="email" className="form-control" placeholder="Email"
                                         {...register("email", {
                                             required: 'Email không được trống!',
                                             minLength: {
@@ -92,6 +98,7 @@ const Login = () => {
                                         })}
                                         value={password}
                                         onChange={e => setPassword(e.target.value)}
+                                        onKeyDown={EnterPress}
                                     />
                                     <div className="input-group-append">
                                         <div className="input-group-text">
