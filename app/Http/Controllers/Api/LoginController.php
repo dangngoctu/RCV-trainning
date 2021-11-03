@@ -53,14 +53,7 @@ class LoginController extends Controller
 
                 $userData = auth('api')->user();
                 $data['last_login_at'] = Carbon::now();
-                $clientIP = $_SERVER['HTTP_CLIENT_IP']
-                ?? $_SERVER["HTTP_CF_CONNECTING_IP"]
-                ?? $_SERVER['HTTP_X_FORWARDED']
-                ?? $_SERVER['HTTP_X_FORWARDED_FOR']
-                ?? $_SERVER['HTTP_FORWARDED']
-                ?? $_SERVER['HTTP_FORWARDED_FOR']
-                ?? $_SERVER['REMOTE_ADDR']
-                ?? '0.0.0.0';
+                $clientIP = $this->ClientIP();
 
                 $data['last_login_ip'] = $clientIP;
                 $data['last_login_at'] = Carbon::now();
