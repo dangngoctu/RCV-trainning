@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models;
-use Auth;
-use Carbon\Carbon;
 use Validator;
 use Hash;
 use Illuminate\Support\Facades\Log;
