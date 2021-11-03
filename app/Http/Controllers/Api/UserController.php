@@ -41,10 +41,10 @@ class UserController extends Controller
             }
 
             $data = $data->select('id', 'name', 'email', 'group_role', 'is_active', 'is_delete')->get();
-            return $this->JsonExport(200, 'Thành công', $data);
+            return $this->JsonExport(200, config('constant.success'), $data);
         } catch (\Exception $e) {
             Log::error($e);
-            return $this->JsonExport(200, 'Thành công', []);
+            return $this->JsonExport(200, config('constant.success'), []);
         }
     }
 
@@ -65,13 +65,13 @@ class UserController extends Controller
             try {
                 $data = Models\MstUser::where('id', $request->id)->first();
                 if ($data) {
-                    return $this->JsonExport(200, 'Thành công', $data);
+                    return $this->JsonExport(200, config('constant.success'), $data);
                 } else {
-                    return $this->JsonExport(403, 'Người dùng không hợp lệ');
+                    return $this->JsonExport(403, config('constant.error_403'));
                 }
             } catch (\Exception $e) {
                 Log::error($e);
-                return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
+                return $this->JsonExport(500, config('constant.error_500'));
             }
         }
     }
@@ -92,10 +92,10 @@ class UserController extends Controller
         }
 
         if ($request->action === 'create' || $request->action === 'update') {
-            $rules['name'] = 'required|max:255';
+            $rules['name'] = 'required|max:255|min:5';
             $rules['group_role'] = 'required';
             if ($request->action === "update") {
-                $rules['email'] = 'required|max:255|email';
+                $rules['email'] = 'required|max:255|email|min:5';
                 if ($request->has('password') && !empty($request->password)) {
                     $rules['password'] = 'same:re_password';
                 }
@@ -106,16 +106,18 @@ class UserController extends Controller
         }
 
         $messages = [
-            'id.required' => 'ID không được trống.',
-            'name.required' => 'Tên không được trống.',
-            'name.max' => 'Tên tối đa 255 ký tự.',
-            'group_role.required' => 'Nhóm không được trống.',
-            'email.required' => 'Email không được trống.',
-            'email.unique' => 'Email không được trùng.',
-            'email.max' => 'Email tối đa 255 ký tự.',
-            'email.email' => 'Email không đúng định dạng.',
-            'password.required' => 'Mật khẩu không được trống.',
-            'password.same' => 'Xác nhận mật khẩu không trùng khớp',
+            'id.required' => config('constant.validation.user.id_required'),
+            'name.required' => config('constant.validation.user.name_required'),
+            'name.max' => config('constant.validation.user.name_max_255'),
+            'name.min' => config('constant.validation.user.name_min_5'),
+            'group_role.required' => config('constant.validation.user.id_required'),
+            'email.required' => config('constant.validation.user.email_required'),
+            'email.unique' => config('constant.validation.user.email_unique'),
+            'email.max' => config('constant.validation.user.email_max_255'),
+            'email.min' => config('constant.validation.user.email_min_5'),
+            'email.email' => config('constant.validation.user.email_type'),
+            'password.required' => config('constant.validation.user.password_required'),
+            'password.same' => config('constant.validation.user.password_same'),
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -156,7 +158,7 @@ class UserController extends Controller
                     if ($request->action === 'create') {
                         $checkUser = Models\MstUser::where('email', $request->email)->first();
                         if ($checkUser) {
-                            return $this->JsonExport(403, 'Email không được trùng.');
+                            return $this->JsonExport(403, config('constant.email_exist'));
                         }
                         $data['email'] = $request->email;
                         $data['remember_token'] = null;
@@ -165,7 +167,7 @@ class UserController extends Controller
                         $checkUser = Models\MstUser::where('email', $request->email)
                                     ->where('id', '!=', $request->id)->first();
                         if ($checkUser) {
-                            return $this->JsonExport(403, 'Email không được trùng.');
+                            return $this->JsonExport(403, config('constant.email_exist'));
                         }
 
                         $action = Models\MstUser::where('id', $request->id)->update($data);
@@ -173,7 +175,7 @@ class UserController extends Controller
                 } else {
                     $user = Models\MstUser::where('id', $request->id)->first();
                     if (!$user) {
-                        return $this->JsonExport(403, 'Người dùng không hợp lệ');
+                        return $this->JsonExport(403, config('constant.error_403'));
                     }
 
                     if ($request->action === 'delete') {
@@ -189,15 +191,15 @@ class UserController extends Controller
                 }
                 if ($action) {
                     DB::commit();
-                    return $this->JsonExport(200, 'Thành công');
+                    return $this->JsonExport(200, config('constant.success'));
                 } else {
                     DB::rollback();
-                    return $this->JsonExport(403, 'Vui lòng kiểm tra lại dữ liệu.');
+                    return $this->JsonExport(403, config('constant.error_403'));
                 }
             } catch (\Exception $e) {
                 DB::rollback();
                 Log::error($e);
-                return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
+                return $this->JsonExport(500, config('constant.error_500'));
             }
         }
     }

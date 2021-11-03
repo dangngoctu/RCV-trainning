@@ -1,4 +1,55 @@
 <?php
 return [
-    'default_password' => 123456
+    'default_password' => 123456,
+    'success' => 'Thành công',
+    'login_403' => 'Email hoặc mật khẩu không hợp lệ',
+    'error_403' => 'Dữ liệu không hợp lệ',
+    'error_500' => 'Vui lòng liên hệ quản trị viên để được hỗ trợ!',
+    'email_exist' => 'Email đã tồn tại',
+    'validation' => [
+        'customer' => [
+            'id_required' => 'ID không được trống.',
+            'action_required' => 'Action không được trống.',
+            'name_required' => 'Tên không được trống.',
+            'name_max_255' => 'Tên tối đa 255 ký tự.',
+            'name_min_5' => 'Tên tối thiểu 5 ký tự.',
+            'email_required' => 'Email không được trống.',
+            'email_unique' => 'Email không được trùng.',
+            'email_max_255' => 'Email tối đa 255 ký tự.',
+            'email_type' => 'Email không đúng định dạng.',
+            'phone_required' => 'Điện thoại không được trống.',
+            'phone_max' => 'Điện thoại tối đa 14 số.',
+            'phone_type' => 'Điện thoại không đúng định dạng.',
+            'address_required' => 'Địa chỉ không được trống.',
+            'address_max' => 'Địa chỉ tối đa 255 số.',
+            'file_required' => 'File không được trống.',
+            'file_type_csv' => 'File phải thuộc định dạng xlsx, xls.',
+        ],
+        'product' => [
+            'id_required' => 'ID không được trống.',
+            'name_required' => 'Tên không được trống.',
+            'status_required' => 'Tên không được trống.',
+            'name_max_255' => 'Tên tối đa 255 ký tự.',
+            'name_min_5' => 'Tên tối thiểu 5 ký tự.',
+            'price_type' => 'Giá phải là số',
+            'price_required' => 'Giá không được trống.',
+            'price_min' => 'Giá không được âm',
+            'img_type' => 'File phải thuộc định dạng png, jpeg, jpg.',
+            'img_max' => 'File tối đa 2MB.'
+        ],
+        'user' => [
+            'id_required' => 'ID không được trống.',
+            'name_required' => 'Tên không được trống.',
+            'name_max_255' => 'Tên tối đa 255 ký tự.',
+            'name_min_5' => 'Tên tối thiểu 5 ký tự.',
+            'group_role_required' => 'Nhóm không được trống.',
+            'email_required' => 'Email không được trống.',
+            'email_unique' => 'Email không được trùng.',
+            'email_max_255' => 'Email tối đa 255 ký tự.',
+            'email_min_5' => 'Email tối thiểu 5 ký tự.',
+            'email_type' => 'Email không đúng định dạng.',
+            'password_required' => 'Mật khẩu không được trống.',
+            'password_same' => 'Mật khẩu xác nhận không trùng khớp',
+        ]
+    ]
 ];

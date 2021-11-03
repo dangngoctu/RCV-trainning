@@ -48,7 +48,7 @@ class LoginController extends Controller
                 ];
 
                 if (!$token = auth('api')->attempt($credentials)) {
-                    return $this->JsonExport(403, 'Invalid Email or Password');
+                    return $this->JsonExport(403, config('constant.login_403'));
                 }
 
                 $userData = auth('api')->user();
@@ -74,18 +74,18 @@ class LoginController extends Controller
                 $updateToken = $userData->update($data);
 
                 if (!$updateToken) {
-                    return $this->JsonExport(403, 'Invalid Email or Password');
+                    return $this->JsonExport(403, config('constant.login_403'));
                 }
                 $result = [
                     'token' => $token,
                     'name' => $userData->name
                 ];
                 DB::commit();
-                return $this->JsonExport(200, 'Thành công', $result);
+                return $this->JsonExport(200, config('constant.success'), $result);
             } catch (\Exception $e) {
                 DB::rollback();
                 Log::error($e);
-                return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
+                return $this->JsonExport(500, config('constant.error_500'));
             }
         }
     }
@@ -101,16 +101,16 @@ class LoginController extends Controller
             if ($request->header('Authorization')) {
                 $logout = JWTAuth::invalidate($request->header('Authorization'));
                 if ($logout) {
-                    return $this->JsonExport(200, 'Thành công');
+                    return $this->JsonExport(200, config('constant.success'));
                 } else {
-                    return $this->JsonExport(403, 'Token invalid');
+                    return $this->JsonExport(403, config('constant.error_403'));
                 }
             } else {
-                return $this->JsonExport(403, 'Token invalid');
+                return $this->JsonExport(403, config('constant.error_403'));
             }
         } catch (\Exception $e) {
             Log::error($e);
-            return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
+            return $this->JsonExport(500, config('constant.error_500'));
         }
     }
 }

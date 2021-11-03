@@ -64,10 +64,10 @@ class ProductController extends Controller
                     })
                     ->rawColumns(['action'])
                     ->make(true);
-            return $this->JsonExport(200, 'Thành công', $data->original);
+            return $this->JsonExport(200, config('constant.success'), $data->original);
         } catch (\Exception $e) {
             Log::error($e);
-            return $this->JsonExport(200, 'Thành công', []);
+            return $this->JsonExport(200, config('constant.success'), []);
         }
     }
 
@@ -88,13 +88,13 @@ class ProductController extends Controller
             try {
                 $data = Models\MstProduct::where('product_id', $request->id)->first();
                 if ($data) {
-                    return $this->JsonExport(200, 'Thành công', $data);
+                    return $this->JsonExport(200, config('constant.success'), $data);
                 } else {
-                    return $this->JsonExport(403, 'Sản phẩm không hợp lệ');
+                    return $this->JsonExport(403, config('constant.error_403'));
                 }
             } catch (\Exception $e) {
                 Log::error($e);
-                return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
+                return $this->JsonExport(500, config('constant.error_500'));
             }
         }
     }
@@ -125,16 +125,16 @@ class ProductController extends Controller
         }
 
         $messages = [
-            'id.required' => 'ID không được trống.',
-            'product_name.required' => 'Tên không được trống.',
-            'is_sales.required' => 'Trạng thái không được trống.',
-            'product_name.max' => 'Tên tối đa 5 ký tự.',
-            'product_name.min' => 'Tên tối thiểu 5 ký tự.',
-            'product_price.integer' => 'Giá phải là số',
-            'product_price.required' => 'Giá không được để trống',
-            'product_price.min' => 'Giá không được âm',
-            'file.mines' => 'File phải thuộc định dạng png, jpeg, jpg.',
-            'file.max' => 'File tối đa 2MB.'
+            'id.required' => config('constant.validation.product.id_required'),
+            'product_name.required' => config('constant.validation.product.name_required'),
+            'is_sales.required' => config('constant.validation.product.status_required'),
+            'product_name.max' => config('constant.validation.product.name_max_255'),
+            'product_name.min' => config('constant.validation.product.name_min_5'),
+            'product_price.integer' => config('constant.validation.product.price_type'),
+            'product_price.required' => config('constant.validation.product.price_required'),
+            'product_price.min' => config('constant.validation.product.price_min'),
+            'file.mines' => config('constant.validation.product.img_type'),
+            'file.max' => config('constant.validation.product.img_max'),
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -200,7 +200,7 @@ class ProductController extends Controller
                             $action = $product->update($data);
                         } else {
                             DB::rollback();
-                            return $this->JsonExport(403, 'Sản phẩm không hợp lệ');
+                            return $this->JsonExport(403, config('constant.error_403'));
                         }
                     }
                 } else {
@@ -213,21 +213,21 @@ class ProductController extends Controller
                         $action = $product->delete();
                     } else {
                         DB::rollback();
-                        return $this->JsonExport(403, 'Sản phẩm không hợp lệ');
+                        return $this->JsonExport(403, config('constant.error_403'));
                     }
                 }
 
                 if ($action) {
                     DB::commit();
-                    return $this->JsonExport(200, 'Thành công');
+                    return $this->JsonExport(200, config('constant.success'));
                 } else {
                     DB::rollback();
-                    return $this->JsonExport(403, 'Vui lòng kiểm tra lại dữ liệu.');
+                    return $this->JsonExport(403, config('constant.error_403'));
                 }
             } catch (\Exception $e) {
                 DB::rollback();
                 Log::error($e);
-                return $this->JsonExport(500, 'Vui lòng liên hệ quản trị viên để được hỗ trợ!');
+                return $this->JsonExport(500, config('constant.error_500'));
             }
         }
     }
